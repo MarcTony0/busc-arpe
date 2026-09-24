@@ -1,0 +1,7 @@
+# Agentes e Configurações Locais de IA
+.agents/
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
