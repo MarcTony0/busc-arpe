@@ -155,7 +155,7 @@
 
 **Estado:** 🟡 Em refinamento
 
-### HU-04 — Pesquisa livre e abrangente de bens
+### HU-03 — Pesquisa livre e abrangente de bens
 
 **Como** Usuário Comum,
 **quero** pesquisar bens por texto livre em qualquer característica,
@@ -192,7 +192,7 @@
 
 ---
 
-### HU-05 — Painel de Filtros Avançados (Geográficos e Operacionais)
+### HU-04 — Painel de Filtros Avançados (Geográficos e Operacionais)
 
 **Como** Usuário Comum,
 **quero** filtrar os bens por critérios geográficos (Microrregião, GERES, Município) e operacionais (Sistema, Categoria, Situação),
@@ -231,7 +231,7 @@
 
 > **Escopo do MVP:** documentos são somente para visualização (leitura). Upload e gestão de documentos pertencem ao EP-05 (pós-MVP).
 
-### HU-06 — Visualizar dados gerais do Bem Pai
+### HU-05 — Visualizar dados gerais do Bem Pai
 
 **Como** Usuário Comum,
 **quero** visualizar os dados essenciais de um Bem Pai selecionado no mapa,
@@ -246,7 +246,7 @@
 
 ---
 
-### HU-07 — Visualizar lista de equipamentos (Bens Filhos)
+### HU-06 — Visualizar lista de equipamentos (Bens Filhos)
 
 **Como** Usuário Comum,
 **quero** visualizar a lista de equipamentos (bens filhos) vinculados a uma instalação (Bem Pai),
@@ -268,7 +268,7 @@
 
 ---
 
-### HU-08 — Visualizar documentos anexos
+### HU-07 — Visualizar documentos anexos
 
 **Como** Usuário Comum,
 **quero** visualizar uma lista com os nomes e links dos documentos anexados ao bem,
@@ -297,7 +297,7 @@
 **Ator principal:** Todos os usuários
 **Estado:** 🟡 Em refinamento
 
-### HU-09 — Login e Autenticação
+### HU-08 — Login e Autenticação
 
 **Como** usuário cadastrado,
 **quero** me autenticar no sistema usando e-mail e senha,
@@ -322,7 +322,7 @@
 
 ---
 
-### HU-10 — Proteção de Rotas e Interface
+### HU-09 — Proteção de Rotas e Interface
 
 **Como** sistema,
 **quero** controlar o acesso às telas e ações com base no perfil logado,
