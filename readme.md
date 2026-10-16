@@ -1,28 +1,83 @@
 # buscARPE
 
-Sistema web para consulta e visualização geográfica
-de informações oficiais sobre bens reversíveis.
+Sistema web para centralização, consulta e visualização geográfica de informações oficiais sobre os **bens reversíveis dos sistemas de saneamento de Pernambuco** — Abastecimento de Água (SAA) e Esgotamento Sanitário (SES) — regulados pela ARPE.
 
-## Objetivo
+---
 
-Centralizar a consulta de informações oficiais dos
-bens reversíveis por meio de pesquisa, filtros,
-visualização geográfica e consulta detalhada.
+## 🎯 Objetivo e Escopo do MVP
 
-## Fonte oficial
+O buscARPE resolve a fragmentação de dados das instalações e equipamentos, permitindo consulta ágil e espacializada a partir do Documento Final Oficial da concessionária.
 
-O Documento Final Oficial fornecido pela concessionária
-é considerado a fonte de verdade dos dados cadastrais.
+* **Está no MVP:**
+  - Visualização dos Bens Pai (instalações) em mapa interativo com *clustering* (agrupamento numérico) e diferenciação visual por sistema (SAA azul e SES verde-azulado);
+  - Gaveta lateral de filtros cumulativos em cascata (Microrregião/MRAE, GERES, Município, Sistema, Categoria e Situação);
+  - Barra de busca textual livre, multi-campo e tolerante a termos sem acento e parciais;
+  - Painel de detalhes do Bem Pai com abas: *Visão Geral* (dados cadastrais), *Equipamentos* (bens filhos) e *Documentos* (links externos);
+  - Autenticação e proteção de rotas via JWT e cookies protegidos.
+* **Fora do MVP:** Edição, inserção manual ou telas administrativas de cadastro (foco total em consulta para o Usuário Comum).
 
-## MVP
+---
 
-O MVP do buscARPE será focado em:
+## 🏗️ Arquitetura e Tecnologias
 
-- consulta;
-- pesquisa;
-- filtros;
-- mapa;
-- visualização detalhada;
-- acesso autorizado.
+A aplicação é estruturada como um monorepo simples e modular:
 
-Edição e administração dos dados estão fora do MVP.
+* **Frontend (`/frontend`):** [Next.js](https://nextjs.org) (App Router), TypeScript, [TailwindCSS v4](https://tailwindcss.com), [shadcn/ui](https://ui.shadcn.com) e [Leaflet](https://leafletjs.com).
+* **Backend (`/backend`):** [NestJS](https://nestjs.com), TypeScript, [Prisma ORM](https://www.prisma.io) e [PostgreSQL](https://www.postgresql.org).
+* **Integração:** Comunicação transparente entre frontend (porta 3000) e backend (porta 3001) via `rewrites` nativos do Next.js (`/api/*`), eliminando problemas de CORS e garantindo cookies seguros no mesmo domínio.
+
+---
+
+## 📋 Pré-requisitos
+
+* [Node.js](https://nodejs.org) (v20 ou superior — testado na v24)
+* [npm](https://www.npmjs.com) (v10 ou superior)
+* [PostgreSQL](https://www.postgresql.org) (v15 ou superior rodando localmente na porta padrão `5432`)
+
+---
+
+## 🚀 Como Executar o Projeto Localmente
+
+### 1. Clonar o repositório
+```bash
+git clone https://github.com/MarcTony0/busc-arpe.git
+cd busc-arpe
+```
+
+### 2. Configurar o Banco de Dados (Backend)
+No diretório `backend/`, duplique o arquivo `.env.example` para `.env` e configure suas credenciais locais do PostgreSQL:
+```bash
+cp backend/.env.example backend/.env
+```
+Formato esperado no `.env`:
+```env
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_do_banco?schema=public"
+```
+
+### 3. Executar o Backend (NestJS)
+Abra um terminal e execute:
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+O servidor NestJS iniciará na porta **3001**.
+* *Health check de validação:* [http://localhost:3001/health](http://localhost:3001/health) (deve responder `{"status":"ok"}`).
+
+### 4. Executar o Frontend (Next.js)
+Abra um **segundo terminal** e execute:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+O servidor Next.js iniciará na porta **3000**.
+* *Acesso à aplicação:* [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📚 Documentação Técnica Adicional
+
+Para detalhes completos de regras de negócio, modelagem de dados e requisitos funcionais, consulte a pasta [`docs/`](./docs):
+* **[Análise de Domínio e Modelo Conceitual](./docs/01-dominio/analise-de-dominio.md)**
+* **[Backlog do Produto, Épicos e Histórias de Usuário (HUs)](./docs/02-requisitos/backlog.md)**
