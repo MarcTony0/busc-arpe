@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +8,81 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum TipoSistema {
+  SAA
+  SES
+}
+
+enum SituacaoBem {
+  OPERANDO
+  INOPERANTE
+}
+
+enum PerfilUsuario {
+  USUARIO_COMUM
+  ESPECIALISTA_TECNICO
+  GESTOR
+}
+
+model Municipio {
+  id               Int      @id @default(autoincrement())
+  nome             String   @unique
+  nome_normalizado String
+  geres            String
+  mrae             String
+  bens             Bem[]
+
+  @@map("municipios")
+}
+
+model Bem {
+  id                   Int          @id @default(autoincrement())
+  codigo_unico         String       @unique
+  nome                 String
+  endereco             String?
+  municipio_id         Int
+  municipio            Municipio    @relation(fields: [municipio_id], references: [id])
+  latitude             Float?
+  longitude            Float?
+  categoria            String
+  tipo_sistema         TipoSistema
+  situacao             SituacaoBem
+  is_pai               Boolean      @default(true)
+  bem_pai_id           Int?
+  bem_pai              Bem?         @relation("PaiFilho", fields: [bem_pai_id], references: [id], onDelete: Cascade)
+  filhos               Bem[]        @relation("PaiFilho")
+  dados_complementares Json?
+  busca_texto          String?
+  documentos           Documento[]
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+
+  @@index([busca_texto])
+  @@map("bens")
+}
+
+model Documento {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  url       String
+  tipo      String?
+  bem_id    Int
+  bem       Bem      @relation(fields: [bem_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("documentos")
+}
+
+model Usuario {
+  id         Int           @id @default(autoincrement())
+  nome       String
+  email      String        @unique
+  senha_hash String
+  perfil     PerfilUsuario @default(USUARIO_COMUM)
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+
+  @@map("usuarios")
 }
