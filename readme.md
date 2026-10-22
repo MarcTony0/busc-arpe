@@ -81,3 +81,10 @@ O servidor Next.js iniciará na porta **3000**.
 Para detalhes completos de regras de negócio, modelagem de dados e requisitos funcionais, consulte a pasta [`docs/`](./docs):
 * **[Análise de Domínio e Modelo Conceitual](./docs/01-dominio/analise-de-dominio.md)**
 * **[Backlog do Produto, Épicos e Histórias de Usuário (HUs)](./docs/02-requisitos/backlog.md)**
+* **[Transcrição das Sprints e Tasks Smart](./docs/04-backlog/tasks-smart-transcricao.md)**
+
+## Histórico de Alterações
+
+| Data | Alteração |
+|---|---|
+| 2026-10-22 | Adicionada referência à transcrição das sprints e tasks do projeto. |

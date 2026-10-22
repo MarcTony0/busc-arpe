@@ -4,22 +4,13 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as fs from 'fs';
 import * as path from 'path';
+import { normalizarTexto } from './normalizar-texto';
+
+export { normalizarTexto };
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
-
-/**
- * Remove acentuação e converte para minúsculas
- * Ex: "São Lourenço da Mata" -> "sao lourenco da mata"
- */
-export function normalizarTexto(texto: string): string {
-  return texto
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
-}
 
 async function main() {
   console.log('Iniciando seed de Municípios de Pernambuco');

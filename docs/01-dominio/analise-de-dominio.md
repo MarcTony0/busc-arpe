@@ -23,14 +23,27 @@ Seu objetivo principal é centralizar as informações fragmentadas, permitindo 
 * **Bem Filho (Equipamento):** Componentes alocados dentro de um Bem Pai (ex: Bombas, Painéis). Não possuem coordenada própria no mapa.
 * **Situação do Bem:** Estado operacional do bem, restrito atualmente a "Operando" ou "Inoperante" (desativado/abandonado/obsoleto).
 
-## 4. Regras Geográficas e Enriquecimento de Dados
+## 4. Regra de Busca por Texto
+* A busca textual utilizada para localizar marcadores no mapa considera somente atributos do **Bem Pai**: código da instalação, nome da instalação, endereço, município, categoria, sistema e situação.
+* Cada Bem Filho mantém seu próprio índice textual, composto pelos dados do equipamento. Esse índice não é incorporado ao índice do pai e não participa da busca de instalações no mapa.
+* Os textos de busca são normalizados para minúsculas e sem acentos. A normalização do termo pesquisado deve seguir a mesma regra.
+
+## 5. Regras Geográficas e Enriquecimento de Dados
 A fonte oficial de dados (planilha) contém a coluna `MUNICÍPIO`. Para garantir a integridade e evitar erros humanos de preenchimento na origem, o buscARPE manterá uma **Tabela de Domínio Interna** que mapeará automaticamente os 184 municípios de Pernambuco para:
 * **As 12 GERES** (Gerências Regionais de Saúde / Polos).
 * **As 2 Microrregiões** (MRAE-I Sertão e MRAE-II RMR–Pajeú).
 
-## 5. Diagramas do Sistema
+## 6. Distribuição de Dados Complementares
+* Os dados excedentes referentes à instalação, que não possuem coluna núcleo no modelo, serão armazenados em `dados_complementares` do Bem Pai.
+* Os dados excedentes referentes a cada equipamento serão armazenados em `dados_complementares` do respectivo Bem Filho.
+* Os dados de equipamentos permanecem associados aos filhos e não são agregados aos dados complementares nem ao índice de busca do pai.
+* `MUNICIPIO` e `ENDERECO` da instalação preenchem os campos núcleo do Bem Pai. `CONDICAO_OPERACIONAL` permanece nos dados complementares do filho; a situação do pai é derivada das situações dos equipamentos.
+* O conjunto de dados complementares do pai é configurável em `seed-config.ts` e, com a planilha de referência atual, contém `ID_ATIVO_PAI`, `NOME_ATIVO_PAI`, `MICRORREGIAO`, `SISTEMA` e `SISTEMA_UNIDADE`. Os demais campos originais de cada equipamento ficam no JSONB do respectivo filho, exceto os campos núcleo.
+* O montador prepara os payloads de pais e filhos em memória e valida se os atributos repetidos da instalação são consistentes antes de qualquer gravação no banco.
 
-### 5.1. Casos de Uso (Atores e Ações)
+## 7. Diagramas do Sistema
+
+### 7.1. Casos de Uso (Atores e Ações)
 ```mermaid
 flowchart LR
     A[Usuário Autorizado] --> C1(Visualizar Mapa com Clusters)
@@ -41,7 +54,7 @@ flowchart LR
     A --> C6(Acessar Laudos/Documentos Anexos)
 ```
 
-### 5.2. Modelo Conceitual de Dados (Entidade-Relacionamento)
+### 7.2. Modelo Conceitual de Dados (Entidade-Relacionamento)
 ```mermaid
 erDiagram
     BEM_REVERSIVEL ||--o{ BEM_REVERSIVEL : "é composto por (Filhos/Equipamentos)"
@@ -61,10 +74,17 @@ erDiagram
     }
 ```
 
-## 6. Layout e Interação (UI/UX)
+## 8. Layout e Interação (UI/UX)
 * **Painel Esquerdo (Gaveta):** Filtros avançados em formato "sanfona" (Microrregião, GERES, Município, Sistema, Categoria, Situação).
 * **Centro:** Mapa ocupando a área principal. Utiliza *clustering* (agrupamento numérico) que se desmembra em pinos individuais conforme o nível de *zoom*.
 * **Painel Direito/Central (Modal/Gaveta Flutuante):** Ao clicar em um Bem Pai, exibe abas:
   1. `Visão Geral` (Dados cadastrais da Instalação)
   2. `Equipamentos` (Lista de Bens Filhos)
   3. `Documentos` (Links para PDFs)
+
+## Histórico de Alterações
+| Data | Alteração |
+|---|---|
+| 2026-10-22 | Definido que a busca do mapa considera somente atributos dos Bens Pais; cada Bem Filho mantém índice próprio, sem contribuir para a busca da instalação. |
+| 2026-10-22 | Definido que dados complementares da instalação ficam no Bem Pai e dados complementares de equipamentos ficam nos respectivos Bens Filhos. |
+| 2026-10-22 | Documentada a distribuição dos campos núcleo e JSONB e a validação de consistência na preparação em memória dos payloads do seed. |

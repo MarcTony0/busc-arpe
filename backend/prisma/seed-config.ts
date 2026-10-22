@@ -1,0 +1,46 @@
+import { TipoSistema } from '../generated/prisma/enums';
+
+export const seedConfig = {
+  colunas: {
+    idBem: 'ID_BEM',
+    nomeBem: 'NOME_BEM',
+    codigoUnicoInstalacao: 'CODIGO_UNICO_INSTALACAO',
+    nomeInstalacao: 'NOME_INSTALACAO',
+    municipio: 'MUNICIPIO',
+    endereco: 'ENDERECO',
+    latitude: 'LATITUDE',
+    longitude: 'LONGITUDE',
+    condicaoOperacional: 'CONDICAO_OPERACIONAL',
+  },
+  sistemaPorSigla: {
+    SAA: TipoSistema.SAA,
+    EAT: TipoSistema.SAA,
+    RES: TipoSistema.SAA,
+    DMC: TipoSistema.SAA,
+    ETA: TipoSistema.SAA,
+    EAB: TipoSistema.SAA,
+    CAP: TipoSistema.SAA,
+    STP: TipoSistema.SAA,
+    DAT: TipoSistema.SAA,
+    SES: TipoSistema.SES,
+    EEE: TipoSistema.SES,
+    ETE: TipoSistema.SES,
+  },
+  sistemaDesconhecido: TipoSistema.NAO_INFORMADO,
+  colunasNucleoPai: [
+    'codigoUnicoInstalacao',
+    'nomeInstalacao',
+    'municipio',
+    'endereco',
+    'latitude',
+    'longitude',
+  ],
+  colunasNucleoFilho: ['idBem', 'nomeBem'],
+  colunasDadosComplementaresPai: [
+    'ID_ATIVO_PAI',
+    'NOME_ATIVO_PAI',
+    'MICRORREGIAO',
+    'SISTEMA',
+    'SISTEMA_UNIDADE',
+  ],
+} as const;

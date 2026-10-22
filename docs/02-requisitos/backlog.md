@@ -10,6 +10,9 @@
 | 0.4.0 | 2026-10-05 | Refinamento do EP-02: HU-04 (Pesquisa Livre) e HU-05 (Filtros Avançados) |
 | 0.5.0 | 2026-10-05 | Refinamento do EP-03: HU-06, HU-07 e HU-08 (Detalhes, Equipamentos e Documentos) |
 | 0.6.0 | 2026-10-05 | Inclusão do EP-04: Autenticação (HU-09 e HU-10) e atualização do mapa de épicos |
+| 0.7.0 | 2026-10-22 | Definição do escopo da busca textual: índices independentes para pais e filhos; busca do mapa restrita aos atributos dos Bens Pais |
+| 0.8.0 | 2026-10-22 | Definição de que dados complementares da instalação ficam no Bem Pai e dados complementares de equipamentos ficam nos respectivos Bens Filhos |
+| 0.9.0 | 2026-10-22 | Registro da preparação em memória dos payloads de pais e filhos, da separação de campos núcleo/JSONB e das validações de consistência da instalação |
 
 ---
 
@@ -158,7 +161,7 @@
 ### HU-03 — Pesquisa livre e abrangente de bens
 
 **Como** Usuário Comum,
-**quero** pesquisar bens por texto livre em qualquer característica,
+**quero** pesquisar Bens Pais por texto livre em suas características,
 **para** localizar registros rapidamente mesmo com informações incompletas.
 
 **Estado:** 🟡 Em refinamento
@@ -189,6 +192,14 @@
 > **Dado** que o usuário realiza uma busca,
 > **Quando** o termo digitado não corresponder a nenhum bem no sistema (ou dentro dos filtros atuais),
 > **Então** o sistema deve exibir uma mensagem clara de "Nenhum bem encontrado" e o mapa deve ficar vazio de marcadores.
+
+**CA-06 — Busca restrita aos atributos do Bem Pai**
+> **Dado** que um termo aparece somente nos dados de um equipamento (Bem Filho),
+> **Quando** o usuário realizar uma busca textual no mapa,
+> **Então** a instalação correspondente não deve ser retornada por esse termo; o índice textual próprio do filho não participa da busca de Bens Pais.
+
+#### Observações
+- A busca do mapa considera código, nome, endereço, município, categoria, sistema e situação do Bem Pai. Cada Bem Filho pode manter índice de busca próprio, sem que seus dados sejam agregados ao texto de busca do pai.
 
 ---
 

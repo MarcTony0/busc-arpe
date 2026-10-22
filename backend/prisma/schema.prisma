@@ -13,6 +13,7 @@ datasource db {
 enum TipoSistema {
   SAA
   SES
+  NAO_INFORMADO @map("N/I")
 }
 
 enum SituacaoBem {

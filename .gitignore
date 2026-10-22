@@ -27,9 +27,27 @@ generated/
 # Variáveis de ambiente e segredos
 .env
 .env.local
+.env.*
+!.env.example
+!**/.env.example
 .env.*.local
 *.env
 *.pem
+
+# Planilhas e dados locais de ingestão
+*.xlsx
+*.xls
+*.csv
+!backend/prisma/data/municipios.csv
+
+# Dumps e backups locais
+dump.sql
+*.dump
+*.dump.*
+*.sql.gz
+*.sql.zip
+*.backup
+*.bak
 
 # Testes e Cobertura
 coverage/
