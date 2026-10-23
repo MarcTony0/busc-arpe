@@ -3,6 +3,14 @@ import { normalizarTexto } from '../normalizar-texto';
 import { seedConfig } from '../seed-config';
 import type { LinhaBemPlanilha } from './arquivo-reader';
 
+const CONDICOES_INOPERANTES = new Set([
+  'ativo ausente (inexistente)',
+  'ativo ausente (manutencao)',
+  'nao instalado',
+  'nunca operou',
+]);
+const CONDICOES_NAO_INFORMADAS = new Set(['n/i', 'outro']);
+
 export interface GrupoInstalacao {
   codigoUnicoInstalacao: string;
   categoria: string;
@@ -49,6 +57,12 @@ function interpretarCondicaoOperacional(condicao: string): SituacaoBem | null {
   const condicaoNormalizada = normalizarTexto(condicao);
 
   if (condicaoNormalizada === 'operando') return SituacaoBem.OPERANDO;
+  if (CONDICOES_INOPERANTES.has(condicaoNormalizada)) {
+    return SituacaoBem.INOPERANTE;
+  }
+  if (CONDICOES_NAO_INFORMADAS.has(condicaoNormalizada)) {
+    return SituacaoBem.NAO_INFORMADO;
+  }
   if (condicaoNormalizada.startsWith('inoperante')) {
     return SituacaoBem.INOPERANTE;
   }
@@ -82,14 +96,19 @@ export function derivarSituacaoPai(
 
   const situacoes = equipamentos.map(derivarSituacaoFilho);
 
-  return situacoes.some((situacao) => situacao === SituacaoBem.OPERANDO)
-    ? SituacaoBem.OPERANDO
-    : SituacaoBem.INOPERANTE;
+  if (situacoes.some((situacao) => situacao === SituacaoBem.OPERANDO)) {
+    return SituacaoBem.OPERANDO;
+  }
+  if (situacoes.every((situacao) => situacao === SituacaoBem.NAO_INFORMADO)) {
+    return SituacaoBem.NAO_INFORMADO;
+  }
+  return SituacaoBem.INOPERANTE;
 }
 
-function calcularMediaCoordenadas(
-  equipamentos: LinhaBemPlanilha[],
-): { latitude: number | null; longitude: number | null } {
+function calcularMediaCoordenadas(equipamentos: LinhaBemPlanilha[]): {
+  latitude: number | null;
+  longitude: number | null;
+} {
   const equipamentosComCoordenadas = equipamentos.filter(
     (equipamento) =>
       equipamento.latitude !== null && equipamento.longitude !== null,
@@ -155,10 +174,7 @@ export function agruparInstalacoes(
       }
 
       const coordenadas = calcularMediaCoordenadas(equipamentos);
-      if (
-        coordenadas.latitude === null ||
-        coordenadas.longitude === null
-      ) {
+      if (coordenadas.latitude === null || coordenadas.longitude === null) {
         avisos.push({
           codigoUnicoInstalacao,
           motivo:

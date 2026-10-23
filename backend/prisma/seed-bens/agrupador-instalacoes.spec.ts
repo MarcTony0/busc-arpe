@@ -1,8 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import {
-  SituacaoBem,
-  TipoSistema,
-} from '../../generated/prisma/enums';
+import { SituacaoBem, TipoSistema } from '../../generated/prisma/enums';
 import type { LinhaBemPlanilha } from './arquivo-reader';
 import {
   agruparInstalacoes,
@@ -73,8 +70,7 @@ describe('agruparInstalacoes', () => {
     expect(resultado.avisos).toEqual([
       {
         codigoUnicoInstalacao: 'ABR-XYZ-E-001',
-        motivo:
-          'Sigla "XYZ" não mapeada; tipo de sistema definido como N/I.',
+        motivo: 'Sigla "XYZ" não mapeada; tipo de sistema definido como N/I.',
       },
     ]);
   });
@@ -143,6 +139,40 @@ describe('agruparInstalacoes', () => {
     expect(resultado.grupos[0].situacao).toBe(SituacaoBem.INOPERANTE);
   });
 
+  it.each(['N/I', 'Outro'])(
+    'classifica a condição "%s" como N/I no filho',
+    (condicaoOperacional) => {
+      const linha = criarLinha({ condicaoOperacional });
+      expect(derivarSituacaoPai([linha])).toBe(SituacaoBem.NAO_INFORMADO);
+    },
+  );
+
+  it('deriva N/I para o pai quando todos os filhos são N/I', () => {
+    const resultado = agruparInstalacoes([
+      criarLinha({ condicaoOperacional: 'N/I' }),
+      criarLinha({
+        numeroLinha: 3,
+        idBem: '7696',
+        condicaoOperacional: 'Outro',
+      }),
+    ]);
+
+    expect(resultado.grupos[0].situacao).toBe(SituacaoBem.NAO_INFORMADO);
+  });
+
+  it('deriva Inoperante para o pai quando há Inoperante e N/I, sem Operando', () => {
+    const resultado = agruparInstalacoes([
+      criarLinha({ condicaoOperacional: 'N/I' }),
+      criarLinha({
+        numeroLinha: 3,
+        idBem: '7696',
+        condicaoOperacional: 'Inoperante',
+      }),
+    ]);
+
+    expect(resultado.grupos[0].situacao).toBe(SituacaoBem.INOPERANTE);
+  });
+
   it('interrompe o processamento para condição vazia ou desconhecida', () => {
     expect(() =>
       derivarSituacaoPai([
@@ -161,9 +191,7 @@ describe('agruparInstalacoes', () => {
 
   it('interrompe o agrupamento quando a linha não tem código de instalação', () => {
     expect(() =>
-      agruparInstalacoes([
-        criarLinha({ codigoUnicoInstalacao: ' ' }),
-      ]),
+      agruparInstalacoes([criarLinha({ codigoUnicoInstalacao: ' ' })]),
     ).toThrow(
       'Linha 2: CODIGO_UNICO_INSTALACAO é obrigatório para agrupar equipamentos.',
     );

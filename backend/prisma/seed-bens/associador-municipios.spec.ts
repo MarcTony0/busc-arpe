@@ -40,20 +40,29 @@ describe('associarMunicipios', () => {
 
     const resultado = associarMunicipios([grupo], municipios);
 
-    expect(resultado).toHaveLength(1);
-    expect(resultado[0].municipioId).toBe(18);
-    expect(resultado[0].equipamentos).toHaveLength(2);
+    expect(resultado.gruposAssociados).toHaveLength(1);
+    expect(resultado.gruposAssociados[0].municipioId).toBe(18);
+    expect(resultado.gruposAssociados[0].equipamentos).toHaveLength(2);
+    expect(resultado.pendencias).toEqual([]);
   });
 
-  it('falha explicitamente quando um município não está na tabela de domínio', () => {
+  it('adia o grupo quando um município não está na tabela de domínio', () => {
     const grupo = criarGrupo(['Município desconhecido']);
 
-    expect(() => associarMunicipios([grupo], [])).toThrow(
-      'município "Município desconhecido" não encontrado na tabela de domínio.',
-    );
+    expect(associarMunicipios([grupo], [])).toEqual({
+      gruposAssociados: [],
+      pendencias: [
+        {
+          codigoUnicoInstalacao: 'ABR-EAT-E-001',
+          numeroLinha: 2,
+          municipioInformado: 'Município desconhecido',
+          motivo: 'Município não encontrado na tabela de domínio.',
+        },
+      ],
+    });
   });
 
-  it('falha se os equipamentos de uma instalação apontarem para municípios diferentes', () => {
+  it('adia todas as linhas quando os equipamentos apontam para municípios diferentes', () => {
     const grupo = criarGrupo(['Abreu e Lima', 'Recife']);
     const municipios: MunicipioDominio[] = [
       {
@@ -68,9 +77,25 @@ describe('associarMunicipios', () => {
       },
     ];
 
-    expect(() => associarMunicipios([grupo], municipios)).toThrow(
-      'está associada a mais de um município: Abreu e Lima, Recife.',
-    );
+    const resultado = associarMunicipios([grupo], municipios);
+
+    expect(resultado.gruposAssociados).toEqual([]);
+    expect(resultado.pendencias).toEqual([
+      {
+        codigoUnicoInstalacao: 'ABR-EAT-E-001',
+        numeroLinha: 2,
+        municipioInformado: 'Abreu e Lima',
+        motivo:
+          'Instalação associada a municípios divergentes: Abreu e Lima, Recife.',
+      },
+      {
+        codigoUnicoInstalacao: 'ABR-EAT-E-001',
+        numeroLinha: 3,
+        municipioInformado: 'Recife',
+        motivo:
+          'Instalação associada a municípios divergentes: Abreu e Lima, Recife.',
+      },
+    ]);
   });
 
   it('rejeita nomes normalizados duplicados na tabela de domínio', () => {

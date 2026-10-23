@@ -63,10 +63,59 @@ function criarLinha(
 
 function prepararGrupos(linhas: LinhaBemPlanilha[]) {
   const grupos = agruparInstalacoes(linhas).grupos;
-  return associarMunicipios(grupos, [municipio]);
+  return associarMunicipios(grupos, [municipio]).gruposAssociados;
 }
 
 describe('montarPayloadsBem', () => {
+  it.each([
+    'Ativo Ausente (inexistente)',
+    'Ativo Ausente (manutencao)',
+    'Nao Instalado',
+    'Nunca operou',
+  ])(
+    'classifica "%s" como inoperante e preserva a condição original',
+    (condicaoOperacional) => {
+      const [payload] = montarPayloadsBem(
+        prepararGrupos([
+          criarLinha({
+            condicaoOperacional,
+            dadosOriginais: { CONDICAO_OPERACIONAL: condicaoOperacional },
+          }),
+        ]),
+      );
+
+      expect(payload.pai.situacao).toBe(SituacaoBem.INOPERANTE);
+      expect(payload.filhos[0]).toMatchObject({
+        situacao: SituacaoBem.INOPERANTE,
+        dados_complementares: {
+          CONDICAO_OPERACIONAL: condicaoOperacional,
+        },
+      });
+    },
+  );
+
+  it.each(['N/I', 'Outro'])(
+    'mapeia "%s" para situacao N/I e preserva a condição original',
+    (condicaoOperacional) => {
+      const [payload] = montarPayloadsBem(
+        prepararGrupos([
+          criarLinha({
+            condicaoOperacional,
+            dadosOriginais: { CONDICAO_OPERACIONAL: condicaoOperacional },
+          }),
+        ]),
+      );
+
+      expect(payload.pai.situacao).toBe(SituacaoBem.NAO_INFORMADO);
+      expect(payload.filhos[0]).toMatchObject({
+        situacao: SituacaoBem.NAO_INFORMADO,
+        dados_complementares: {
+          CONDICAO_OPERACIONAL: condicaoOperacional,
+        },
+      });
+    },
+  );
+
   it('separa os campos núcleo e os dados complementares dos pais e dos filhos', () => {
     const linhas = [
       criarLinha(),

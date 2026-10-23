@@ -1,7 +1,5 @@
 import { normalizarTexto } from '../normalizar-texto';
-import type {
-  GrupoInstalacao,
-} from './agrupador-instalacoes';
+import type { GrupoInstalacao } from './agrupador-instalacoes';
 
 export interface MunicipioDominio {
   id: number;
@@ -11,6 +9,18 @@ export interface MunicipioDominio {
 
 export interface GrupoComMunicipio extends GrupoInstalacao {
   municipioId: number;
+}
+
+export interface PendenciaAssociacaoMunicipio {
+  codigoUnicoInstalacao: string;
+  numeroLinha: number;
+  municipioInformado: string;
+  motivo: string;
+}
+
+export interface ResultadoAssociacaoMunicipios {
+  gruposAssociados: GrupoComMunicipio[];
+  pendencias: PendenciaAssociacaoMunicipio[];
 }
 
 function criarIndiceMunicipios(
@@ -41,45 +51,57 @@ function criarIndiceMunicipios(
 export function associarMunicipios(
   grupos: GrupoInstalacao[],
   municipios: MunicipioDominio[],
-): GrupoComMunicipio[] {
+): ResultadoAssociacaoMunicipios {
   const indiceMunicipios = criarIndiceMunicipios(municipios);
-  const erros: string[] = [];
   const gruposAssociados: GrupoComMunicipio[] = [];
+  const pendencias: PendenciaAssociacaoMunicipio[] = [];
 
   for (const grupo of grupos) {
+    const municipiosDasLinhas = grupo.equipamentos.map((equipamento) => ({
+      equipamento,
+      municipio: indiceMunicipios.get(normalizarTexto(equipamento.municipio)),
+    }));
     const municipiosDoGrupo = new Map<number, string>();
-
-    for (const equipamento of grupo.equipamentos) {
-      const municipioNormalizado = normalizarTexto(equipamento.municipio);
-      const municipio = indiceMunicipios.get(municipioNormalizado);
-
-      if (!municipio) {
-        erros.push(
-          `Instalação "${grupo.codigoUnicoInstalacao}", linha ${equipamento.numeroLinha}: município "${equipamento.municipio}" não encontrado na tabela de domínio.`,
-        );
-        continue;
-      }
-
-      municipiosDoGrupo.set(municipio.id, municipio.nome);
+    for (const { municipio } of municipiosDasLinhas) {
+      if (municipio) municipiosDoGrupo.set(municipio.id, municipio.nome);
     }
 
-    if (municipiosDoGrupo.size > 1) {
-      const nomes = Array.from(municipiosDoGrupo.values()).join(', ');
-      erros.push(
-        `Instalação "${grupo.codigoUnicoInstalacao}" está associada a mais de um município: ${nomes}.`,
-      );
+    const municipioDivergente = municipiosDoGrupo.size > 1;
+    const municipioDesconhecido = municipiosDasLinhas.some(
+      ({ municipio }) => municipio === undefined,
+    );
+
+    if (municipioDivergente || municipioDesconhecido) {
+      const nomesMunicipios = Array.from(municipiosDoGrupo.values()).join(', ');
+      for (const { equipamento, municipio } of municipiosDasLinhas) {
+        if (!municipio) {
+          pendencias.push({
+            codigoUnicoInstalacao: grupo.codigoUnicoInstalacao,
+            numeroLinha: equipamento.numeroLinha,
+            municipioInformado: equipamento.municipio,
+            motivo: 'Município não encontrado na tabela de domínio.',
+          });
+        } else if (municipioDivergente) {
+          pendencias.push({
+            codigoUnicoInstalacao: grupo.codigoUnicoInstalacao,
+            numeroLinha: equipamento.numeroLinha,
+            municipioInformado: equipamento.municipio,
+            motivo: `Instalação associada a municípios divergentes: ${nomesMunicipios}.`,
+          });
+        }
+      }
       continue;
     }
 
     const municipioId = municipiosDoGrupo.keys().next().value;
-    if (municipioId === undefined) continue;
+    if (municipioId === undefined) {
+      throw new Error(
+        `Instalação "${grupo.codigoUnicoInstalacao}" não possui equipamentos com município.`,
+      );
+    }
 
     gruposAssociados.push({ ...grupo, municipioId });
   }
 
-  if (erros.length > 0) {
-    throw new Error(`Associação de municípios falhou:\n- ${erros.join('\n- ')}`);
-  }
-
-  return gruposAssociados;
+  return { gruposAssociados, pendencias };
 }

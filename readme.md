@@ -64,6 +64,15 @@ npm run start:dev
 O servidor NestJS iniciará na porta **3001**.
 * *Health check de validação:* [http://localhost:3001/health](http://localhost:3001/health) (deve responder `{"status":"ok"}`).
 
+### Carga de bens a partir de CSV/XLSX
+O comando abaixo conecta ao PostgreSQL configurado em `backend/.env` e grava os bens. Use somente depois de confirmar o banco-alvo, aplicar as migrations necessárias e selecionar o arquivo correto:
+```bash
+cd backend
+npm run seed:bens -- "C:\caminho\para\bens.xlsx"
+```
+Também aceita arquivo `.csv`. O seed atualiza ou cria registros usando `codigo_unico` e transações por lotes; ele não exclui do banco bens que não estejam presentes no arquivo. Veja a [ADR-0001](./docs/03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md) para a decisão de leitura de planilhas.
+Instalações sem correspondência exata na tabela de municípios ou com municípios divergentes entre os filhos são adiadas e listadas em um relatório CSV salvo junto ao arquivo de entrada; os demais grupos válidos podem ser carregados.
+
 ### 4. Executar o Frontend (Next.js)
 Abra um **segundo terminal** e execute:
 ```bash
@@ -83,6 +92,7 @@ Para detalhes completos de regras de negócio, modelagem de dados e requisitos f
 * **[Backlog do Produto, Épicos e Histórias de Usuário (HUs)](./docs/02-requisitos/backlog.md)**
 * **[Decisões de Arquitetura (ADRs)](./docs/03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md)**
 * **[Transcrição das Sprints e Tasks Smart](./docs/04-backlog/tasks-smart-transcricao.md)**
+* **[Handover do Card 1.3 — Seed de Bens](./docs/04-backlog/handover-card-1.3.md)**
 
 ## Histórico de Alterações
 
@@ -90,3 +100,6 @@ Para detalhes completos de regras de negócio, modelagem de dados e requisitos f
 |---|---|
 | 2026-10-22 | Adicionada referência à transcrição das sprints e tasks do projeto. |
 | 2026-10-23 | Documentada a adoção do SheetJS CE 0.20.3 para leitura de CSV/XLSX e adicionada referência à ADR-0001. |
+| 2026-10-23 | Documentado o comando de seed de bens, seu efeito de escrita e a política de upsert sem exclusão de registros ausentes no arquivo. |
+| 2026-10-23 | Documentado o adiamento de instalações sem associação municipal válida e o relatório local de pendências. |
+| 2026-10-23 | Adicionado handover do Card 1.3 com estado, validações, regras e bloqueios para continuidade em outro ambiente. |

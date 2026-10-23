@@ -19,6 +19,7 @@ enum TipoSistema {
 enum SituacaoBem {
   OPERANDO
   INOPERANTE
+  NAO_INFORMADO @map("N/I")
 }
 
 enum PerfilUsuario {

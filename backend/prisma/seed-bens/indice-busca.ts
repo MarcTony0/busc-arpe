@@ -40,7 +40,9 @@ function sistemaParaTexto(tipoSistema: TipoSistema): string {
 }
 
 function situacaoParaTexto(situacao: SituacaoBem): string {
-  return situacao === SituacaoBem.OPERANDO ? 'Operando' : 'Inoperante';
+  if (situacao === SituacaoBem.OPERANDO) return 'Operando';
+  if (situacao === SituacaoBem.INOPERANTE) return 'Inoperante';
+  return 'N/I';
 }
 
 function montarBuscaTextoPai(grupo: GrupoComMunicipio): string {

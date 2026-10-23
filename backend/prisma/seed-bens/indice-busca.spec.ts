@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+import { SituacaoBem } from '../../generated/prisma/enums';
 import { agruparInstalacoes } from './agrupador-instalacoes';
 import {
   associarMunicipios,
@@ -51,7 +52,10 @@ describe('montarIndicesBusca', () => {
         nome_normalizado: 'abreu e lima',
       },
     ];
-    const gruposAssociados = associarMunicipios(grupo, municipios);
+    const gruposAssociados = associarMunicipios(
+      grupo,
+      municipios,
+    ).gruposAssociados;
 
     const indices = montarIndicesBusca(gruposAssociados);
 
@@ -95,7 +99,10 @@ describe('montarIndicesBusca', () => {
         nome_normalizado: 'abreu e lima',
       },
     ];
-    const gruposAssociados = associarMunicipios(grupos, municipios);
+    const gruposAssociados = associarMunicipios(
+      grupos,
+      municipios,
+    ).gruposAssociados;
 
     const indices = montarIndicesBusca(gruposAssociados);
 
@@ -109,5 +116,30 @@ describe('montarIndicesBusca', () => {
         buscaTexto: '7696 motor 2 outra marca',
       },
     ]);
+  });
+
+  it('inclui N/I no índice de busca do pai quando essa for a situação derivada', () => {
+    const grupos = agruparInstalacoes([
+      criarLinha({
+        condicaoOperacional: 'N/I',
+        dadosOriginais: { CONDICAO_OPERACIONAL: 'N/I' },
+      }),
+    ]).grupos;
+    const municipios: MunicipioDominio[] = [
+      {
+        id: 1,
+        nome: 'Abreu e Lima',
+        nome_normalizado: 'abreu e lima',
+      },
+    ];
+    const gruposAssociados = associarMunicipios(
+      grupos,
+      municipios,
+    ).gruposAssociados;
+
+    expect(grupos[0]?.situacao).toBe(SituacaoBem.NAO_INFORMADO);
+    expect(montarIndicesBusca(gruposAssociados).pais[0]?.buscaTexto).toContain(
+      'n/i',
+    );
   });
 });
