@@ -23,7 +23,7 @@ O buscARPE resolve a fragmentação de dados das instalações e equipamentos, p
 A aplicação é estruturada como um monorepo simples e modular:
 
 * **Frontend (`/frontend`):** [Next.js](https://nextjs.org) (App Router), TypeScript, [TailwindCSS v4](https://tailwindcss.com), [shadcn/ui](https://ui.shadcn.com) e [Leaflet](https://leafletjs.com).
-* **Backend (`/backend`):** [NestJS](https://nestjs.com), TypeScript, [Prisma ORM](https://www.prisma.io) e [PostgreSQL](https://www.postgresql.org).
+* **Backend (`/backend`):** [NestJS](https://nestjs.com), TypeScript, [Prisma ORM](https://www.prisma.io), [PostgreSQL](https://www.postgresql.org) e [SheetJS CE](https://docs.sheetjs.com/) para leitura de arquivos CSV/XLSX no seed.
 * **Integração:** Comunicação transparente entre frontend (porta 3000) e backend (porta 3001) via `rewrites` nativos do Next.js (`/api/*`), eliminando problemas de CORS e garantindo cookies seguros no mesmo domínio.
 
 ---
@@ -81,6 +81,7 @@ O servidor Next.js iniciará na porta **3000**.
 Para detalhes completos de regras de negócio, modelagem de dados e requisitos funcionais, consulte a pasta [`docs/`](./docs):
 * **[Análise de Domínio e Modelo Conceitual](./docs/01-dominio/analise-de-dominio.md)**
 * **[Backlog do Produto, Épicos e Histórias de Usuário (HUs)](./docs/02-requisitos/backlog.md)**
+* **[Decisões de Arquitetura (ADRs)](./docs/03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md)**
 * **[Transcrição das Sprints e Tasks Smart](./docs/04-backlog/tasks-smart-transcricao.md)**
 
 ## Histórico de Alterações
@@ -88,3 +89,4 @@ Para detalhes completos de regras de negócio, modelagem de dados e requisitos f
 | Data | Alteração |
 |---|---|
 | 2026-10-22 | Adicionada referência à transcrição das sprints e tasks do projeto. |
+| 2026-10-23 | Documentada a adoção do SheetJS CE 0.20.3 para leitura de CSV/XLSX e adicionada referência à ADR-0001. |

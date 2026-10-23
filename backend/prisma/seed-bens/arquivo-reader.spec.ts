@@ -1,7 +1,7 @@
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import ExcelJS from 'exceljs';
+import XLSX = require('xlsx');
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { seedConfig } from '../seed-config';
 import { lerArquivoBens } from './arquivo-reader';
@@ -73,31 +73,33 @@ describe('lerArquivoBens', () => {
 
   it('lê XLSX e reporta coordenadas inválidas sem inventar um valor', async () => {
     const arquivo = path.join(diretorioTemporario, 'bens.xlsx');
-    const workbook = new ExcelJS.Workbook();
-    const planilha = workbook.addWorksheet('Bens');
-    planilha.addRow([
-      ...Object.values(seedConfig.colunas),
-      ...seedConfig.colunasDadosComplementaresPai,
-      'FABRICANTE',
+    const planilha = XLSX.utils.aoa_to_sheet([
+      [
+        ...Object.values(seedConfig.colunas),
+        ...seedConfig.colunasDadosComplementaresPai,
+        'FABRICANTE',
+      ],
+      [
+        '7695',
+        'Quadro da bomba',
+        'ABR-EAT-E-001',
+        'EEAT Bela Vista',
+        'Abreu e Lima',
+        'Bela Vista, s/n',
+        '-7.91062',
+        'coordenada inválida',
+        'Operando',
+        'ABR-EAT-E-001',
+        'EEAT Bela Vista',
+        'Recife',
+        'Sede',
+        'Pontual',
+        'Fabricante exemplo',
+      ],
     ]);
-    planilha.addRow([
-      '7695',
-      'Quadro da bomba',
-      'ABR-EAT-E-001',
-      'EEAT Bela Vista',
-      'Abreu e Lima',
-      'Bela Vista, s/n',
-      '-7.91062',
-      'coordenada inválida',
-      'Operando',
-      'ABR-EAT-E-001',
-      'EEAT Bela Vista',
-      'Recife',
-      'Sede',
-      'Pontual',
-      'Fabricante exemplo',
-    ]);
-    await workbook.xlsx.writeFile(arquivo);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, planilha, 'Bens');
+    XLSX.writeFile(workbook, arquivo);
 
     const resultado = await lerArquivoBens(arquivo);
 

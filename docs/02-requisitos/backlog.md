@@ -13,6 +13,7 @@
 | 0.7.0 | 2026-10-22 | Definição do escopo da busca textual: índices independentes para pais e filhos; busca do mapa restrita aos atributos dos Bens Pais |
 | 0.8.0 | 2026-10-22 | Definição de que dados complementares da instalação ficam no Bem Pai e dados complementares de equipamentos ficam nos respectivos Bens Filhos |
 | 0.9.0 | 2026-10-22 | Registro da preparação em memória dos payloads de pais e filhos, da separação de campos núcleo/JSONB e das validações de consistência da instalação |
+| 0.10.0 | 2026-10-23 | Registro da decisão arquitetural de utilizar SheetJS CE 0.20.3 na leitura local de CSV/XLSX do seed; ver [ADR-0001](../03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md) |
 
 ---
 

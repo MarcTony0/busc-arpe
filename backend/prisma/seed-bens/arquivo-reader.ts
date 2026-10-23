@@ -1,7 +1,8 @@
 import { createReadStream } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { createInterface } from 'node:readline';
 import path from 'node:path';
-import ExcelJS from 'exceljs';
+import XLSX = require('xlsx');
 import { seedConfig } from '../seed-config';
 
 type ValorPlanilha = string | number | boolean | null;
@@ -44,17 +45,48 @@ function normalizarCabecalho(valor: ValorPlanilha): string {
     .toUpperCase();
 }
 
-function obterValorCelula(valor: ExcelJS.CellValue): ValorPlanilha {
+function normalizarValorCelula(valor: unknown): ValorPlanilha {
   if (valor === null || valor === undefined) return null;
   if (valor instanceof Date) return valor.toISOString();
-  if (typeof valor !== 'object') return valor;
-  if ('error' in valor) return valor.error;
-  if ('richText' in valor) {
-    return valor.richText.map((parte) => parte.text).join('');
+  if (
+    typeof valor === 'string' ||
+    typeof valor === 'number' ||
+    typeof valor === 'boolean'
+  ) {
+    return valor;
   }
-  if ('text' in valor) return valor.text;
-  if ('result' in valor) return obterValorCelula(valor.result ?? null);
-  return null;
+  if (typeof valor !== 'object') {
+    throw new Error('Tipo de valor de célula não suportado.');
+  }
+  if ('error' in valor) {
+    if (typeof valor.error !== 'string') {
+      throw new Error('Valor de erro de célula não reconhecido.');
+    }
+    return valor.error;
+  }
+  if ('richText' in valor && Array.isArray(valor.richText)) {
+    return valor.richText
+      .map((parte: unknown) =>
+        typeof parte === 'object' &&
+        parte !== null &&
+        'text' in parte &&
+        typeof parte.text === 'string'
+          ? parte.text
+          : '',
+      )
+      .join('');
+  }
+  if ('text' in valor && typeof valor.text === 'string') {
+    return valor.text;
+  }
+  if ('result' in valor) {
+    return normalizarValorCelula(valor.result ?? null);
+  }
+  throw new Error('Objeto de célula não reconhecido.');
+}
+
+function obterValorCelula(celula: XLSX.CellObject | undefined): ValorPlanilha {
+  return normalizarValorCelula(celula?.v);
 }
 
 function obterTexto(valor: ValorPlanilha): string {
@@ -120,17 +152,28 @@ async function obterSeparadorCsv(arquivo: string): Promise<string> {
   throw new Error(`O arquivo CSV está vazio: ${arquivo}`);
 }
 
-function obterColunasPlanilha(
-  planilha: ExcelJS.Worksheet,
-): ColunasPlanilha {
+function obterLinhasPlanilha(planilha: XLSX.WorkSheet): ValorPlanilha[][] {
+  const referencia = planilha['!ref'];
+  if (!referencia) return [];
+
+  const intervalo = XLSX.utils.decode_range(referencia);
+  return Array.from({ length: intervalo.e.r + 1 }, (_, linha) =>
+    Array.from({ length: intervalo.e.c + 1 }, (_, coluna) =>
+      obterValorCelula(
+        planilha[XLSX.utils.encode_cell({ r: linha, c: coluna })],
+      ),
+    ),
+  );
+}
+
+function obterColunasPlanilha(linhas: ValorPlanilha[][]): ColunasPlanilha {
   const cabecalhos = new Map<number, string>();
   const indices = new Map<string, number>();
-  const linhaCabecalho = planilha.getRow(1);
+  const linhaCabecalho = linhas[0] ?? [];
 
-  linhaCabecalho.eachCell({ includeEmpty: true }, (celula, indice) => {
-    const cabecalho = normalizarCabecalho(
-      obterValorCelula(celula.value),
-    );
+  linhaCabecalho.forEach((valor, indiceZeroBased) => {
+    const indice = indiceZeroBased + 1;
+    const cabecalho = normalizarCabecalho(valor);
     if (!cabecalho) return;
 
     if (indices.has(cabecalho)) {
@@ -160,22 +203,20 @@ function obterColunasPlanilha(
 }
 
 function criarLinhaBem(
-  linha: ExcelJS.Row,
+  linha: ValorPlanilha[],
+  numeroLinha: number,
   colunas: ColunasPlanilha,
   avisos: AvisoLeitura[],
 ): LinhaBemPlanilha | null {
   const dadosOriginais: Record<string, unknown> = {};
-  let possuiValores = false;
 
-  linha.eachCell({ includeEmpty: true }, (celula, indice) => {
-    const valor = obterValorCelula(celula.value);
-    if (valor !== null && valor !== '') possuiValores = true;
-
+  linha.forEach((valor, indiceZeroBased) => {
+    const indice = indiceZeroBased + 1;
     const cabecalho = colunas.cabecalhos.get(indice);
     if (!cabecalho) {
       if (valor !== null && valor !== '') {
         throw new Error(
-          `Há um valor sem cabeçalho na linha ${linha.number}, coluna ${indice}.`,
+          `Há um valor sem cabeçalho na linha ${numeroLinha}, coluna ${indice}.`,
         );
       }
       return;
@@ -184,7 +225,7 @@ function criarLinhaBem(
     dadosOriginais[cabecalho] = valor;
   });
 
-  if (!possuiValores) return null;
+  if (!linha.some((valor) => valor !== null && valor !== '')) return null;
 
   const obterCampo = (campo: keyof typeof seedConfig.colunas) => {
     const cabecalho = normalizarCabecalho(seedConfig.colunas[campo]);
@@ -192,7 +233,7 @@ function criarLinhaBem(
     if (indice === undefined) {
       throw new Error(`Configuração sem coluna mapeada para "${campo}".`);
     }
-    return obterValorCelula(linha.getCell(indice).value);
+    return linha[indice - 1] ?? null;
   };
 
   const converterCampoCoordenada = (
@@ -208,7 +249,7 @@ function criarLinhaBem(
       String(valor).trim() !== ''
     ) {
       avisos.push({
-        numeroLinha: linha.number,
+        numeroLinha,
         coluna: seedConfig.colunas[campo],
         valor: String(valor),
         motivo: 'Valor não numérico; coordenada tratada como ausente.',
@@ -219,20 +260,16 @@ function criarLinhaBem(
   };
 
   return {
-    numeroLinha: linha.number,
+    numeroLinha,
     idBem: obterTexto(obterCampo('idBem')),
     nomeBem: obterTexto(obterCampo('nomeBem')),
-    codigoUnicoInstalacao: obterTexto(
-      obterCampo('codigoUnicoInstalacao'),
-    ),
+    codigoUnicoInstalacao: obterTexto(obterCampo('codigoUnicoInstalacao')),
     nomeInstalacao: obterTexto(obterCampo('nomeInstalacao')),
     municipio: obterTexto(obterCampo('municipio')),
     endereco: obterTexto(obterCampo('endereco')),
     latitude: converterCampoCoordenada('latitude'),
     longitude: converterCampoCoordenada('longitude'),
-    condicaoOperacional: obterTexto(
-      obterCampo('condicaoOperacional'),
-    ),
+    condicaoOperacional: obterTexto(obterCampo('condicaoOperacional')),
     dadosOriginais,
   };
 }
@@ -241,26 +278,18 @@ export async function lerArquivoBens(
   arquivo: string,
 ): Promise<ResultadoLeituraBens> {
   const extensao = path.extname(arquivo).toLowerCase();
-  const workbook = new ExcelJS.Workbook();
-  let planilha: ExcelJS.Worksheet;
+  let workbook: XLSX.WorkBook;
 
   if (extensao === '.xlsx') {
-    const carregado = await workbook.xlsx.readFile(arquivo);
-    const primeiraPlanilha = carregado.worksheets[0];
-    if (!primeiraPlanilha) {
-      throw new Error(`O arquivo XLSX não possui planilhas: ${arquivo}`);
-    }
-    planilha = primeiraPlanilha;
+    workbook = XLSX.readFile(arquivo, { cellDates: true });
   } else if (extensao === '.csv') {
     const separador = await obterSeparadorCsv(arquivo);
-    planilha = await workbook.csv.readFile(arquivo, {
-      map: (valor) => valor,
-      parserOptions: {
-        delimiter: separador,
-        headers: false,
-        ignoreEmpty: true,
-        trim: true,
-      },
+    const conteudo = await readFile(arquivo, 'utf8');
+    workbook = XLSX.read(conteudo, {
+      type: 'string',
+      FS: separador,
+      raw: true,
+      cellDates: true,
     });
   } else {
     throw new Error(
@@ -268,13 +297,29 @@ export async function lerArquivoBens(
     );
   }
 
-  const colunas = obterColunasPlanilha(planilha);
+  const nomePrimeiraPlanilha = workbook.SheetNames[0];
+  if (!nomePrimeiraPlanilha) {
+    if (extensao === '.xlsx') {
+      throw new Error(`O arquivo XLSX não possui planilhas: ${arquivo}`);
+    }
+    throw new Error(`O arquivo CSV não possui dados tabulares: ${arquivo}`);
+  }
+
+  const planilha = workbook.Sheets[nomePrimeiraPlanilha];
+  if (!planilha) {
+    throw new Error(
+      `Não foi possível carregar a primeira planilha do arquivo: ${arquivo}`,
+    );
+  }
+
+  const linhasPlanilha = obterLinhasPlanilha(planilha);
+  const colunas = obterColunasPlanilha(linhasPlanilha);
   const avisos: AvisoLeitura[] = [];
   const linhas: LinhaBemPlanilha[] = [];
 
-  planilha.eachRow({ includeEmpty: false }, (linha) => {
-    if (linha.number === 1) return;
-    const registro = criarLinhaBem(linha, colunas, avisos);
+  linhasPlanilha.forEach((linha, indice) => {
+    if (indice === 0) return;
+    const registro = criarLinhaBem(linha, indice + 1, colunas, avisos);
     if (registro) linhas.push(registro);
   });
 

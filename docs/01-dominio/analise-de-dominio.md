@@ -41,9 +41,15 @@ A fonte oficial de dados (planilha) contém a coluna `MUNICÍPIO`. Para garantir
 * O conjunto de dados complementares do pai é configurável em `seed-config.ts` e, com a planilha de referência atual, contém `ID_ATIVO_PAI`, `NOME_ATIVO_PAI`, `MICRORREGIAO`, `SISTEMA` e `SISTEMA_UNIDADE`. Os demais campos originais de cada equipamento ficam no JSONB do respectivo filho, exceto os campos núcleo.
 * O montador prepara os payloads de pais e filhos em memória e valida se os atributos repetidos da instalação são consistentes antes de qualquer gravação no banco.
 
-## 7. Diagramas do Sistema
+## 7. Ingestão de Planilhas
+* O seed de bens lê arquivos CSV e XLSX por meio do SheetJS Community Edition (CE) 0.20.3. A biblioteca converte as planilhas em linhas e células; o leitor do buscARPE valida os cabeçalhos configurados e converte os campos para o formato interno usado pelo agrupamento e pela montagem dos payloads.
+* A dependência é instalada pelo tarball oficial da SheetJS, fixado no `package.json` e no lockfile. O pacote homônimo `xlsx` disponível no npm registry está desatualizado e não deve ser usado como substituto.
+* CSV e XLSX são carregados em memória pelo leitor atual. A planilha é uma entrada local do processo de seed; essa decisão não torna seguro aceitar arquivos enviados por usuários ou processar planilhas não confiáveis em endpoints públicos.
+* A justificativa, alternativas, trade-offs, riscos e critérios de revisão da biblioteca estão registrados na [ADR-0001](../03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md).
 
-### 7.1. Casos de Uso (Atores e Ações)
+## 8. Diagramas do Sistema
+
+### 8.1. Casos de Uso (Atores e Ações)
 ```mermaid
 flowchart LR
     A[Usuário Autorizado] --> C1(Visualizar Mapa com Clusters)
@@ -54,7 +60,7 @@ flowchart LR
     A --> C6(Acessar Laudos/Documentos Anexos)
 ```
 
-### 7.2. Modelo Conceitual de Dados (Entidade-Relacionamento)
+### 8.2. Modelo Conceitual de Dados (Entidade-Relacionamento)
 ```mermaid
 erDiagram
     BEM_REVERSIVEL ||--o{ BEM_REVERSIVEL : "é composto por (Filhos/Equipamentos)"
@@ -88,3 +94,4 @@ erDiagram
 | 2026-10-22 | Definido que a busca do mapa considera somente atributos dos Bens Pais; cada Bem Filho mantém índice próprio, sem contribuir para a busca da instalação. |
 | 2026-10-22 | Definido que dados complementares da instalação ficam no Bem Pai e dados complementares de equipamentos ficam nos respectivos Bens Filhos. |
 | 2026-10-22 | Documentada a distribuição dos campos núcleo e JSONB e a validação de consistência na preparação em memória dos payloads do seed. |
+| 2026-10-23 | Documentada a leitura CSV/XLSX com SheetJS CE e a restrição de uso a arquivos locais e controlados no processo de seed; ver [ADR-0001](../03-arquitetura/adr/ADR-0001-leitura-de-planilhas-com-sheetjs.md). |
