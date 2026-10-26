@@ -173,8 +173,11 @@ function obterColunasPlanilha(linhas: ValorPlanilha[][]): ColunasPlanilha {
 
   linhaCabecalho.forEach((valor, indiceZeroBased) => {
     const indice = indiceZeroBased + 1;
-    const cabecalho = normalizarCabecalho(valor);
+    let cabecalho = normalizarCabecalho(valor);
     if (!cabecalho) return;
+    if (cabecalho === 'MICROREGIAO') {
+      cabecalho = 'MICRORREGIAO';
+    }
 
     if (indices.has(cabecalho)) {
       throw new Error(
@@ -259,11 +262,18 @@ function criarLinhaBem(
     return coordenada;
   };
 
+  const idBem = obterTexto(obterCampo('idBem'));
+  const codigoUnicoInstalacao = obterTexto(obterCampo('codigoUnicoInstalacao'));
+
+  if (!idBem && !codigoUnicoInstalacao) {
+    return null;
+  }
+
   return {
     numeroLinha,
-    idBem: obterTexto(obterCampo('idBem')),
+    idBem,
     nomeBem: obterTexto(obterCampo('nomeBem')),
-    codigoUnicoInstalacao: obterTexto(obterCampo('codigoUnicoInstalacao')),
+    codigoUnicoInstalacao,
     nomeInstalacao: obterTexto(obterCampo('nomeInstalacao')),
     municipio: obterTexto(obterCampo('municipio')),
     endereco: obterTexto(obterCampo('endereco')),

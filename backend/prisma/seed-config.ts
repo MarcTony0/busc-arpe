@@ -22,6 +22,8 @@ export const seedConfig = {
     CAP: TipoSistema.SAA,
     STP: TipoSistema.SAA,
     DAT: TipoSistema.SAA,
+    RAP: TipoSistema.SAA,
+    REL: TipoSistema.SAA,
     SES: TipoSistema.SES,
     EEE: TipoSistema.SES,
     ETE: TipoSistema.SES,

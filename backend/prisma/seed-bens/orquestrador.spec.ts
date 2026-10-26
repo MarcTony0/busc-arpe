@@ -153,4 +153,64 @@ describe('prepararSeedBens', () => {
       TipoSistema.NAO_INFORMADO,
     );
   });
+
+  it('desvia instalações com colisão de código para pendências sem interromper o pipeline', async () => {
+    const arquivo = path.join(diretorioTemporario, 'bens-colisao.csv');
+    const cabecalhos = [
+      ...Object.values(seedConfig.colunas),
+      ...seedConfig.colunasDadosComplementaresPai,
+    ];
+    const linhas = [
+      // Instalação com colisão: ID_BEM coincide com CODIGO_UNICO_INSTALACAO
+      [
+        'ABR-EAT-E-001',
+        'Equipamento colidente',
+        'ABR-EAT-E-001',
+        'EEAT Bela Vista',
+        'Abreu e Lima',
+        'Rua Bela Vista',
+        '-7,9',
+        '-34,9',
+        'Operando',
+        'ATIVO-001',
+        'EEAT Bela Vista',
+        'Recife',
+        'Sede',
+        'Pontual',
+      ],
+      // Instalação válida
+      [
+        'VAL-001',
+        'Equipamento Valido',
+        'VAL-EAT-E-002',
+        'EEAT Valida',
+        'Abreu e Lima',
+        'Rua Valida',
+        '-7,9',
+        '-34,9',
+        'Operando',
+        'ATIVO-002',
+        'EEAT Valida',
+        'Recife',
+        'Sede',
+        'Pontual',
+      ],
+    ];
+    const conteudo = [cabecalhos, ...linhas]
+      .map((linha) => linha.join(';'))
+      .join('\n');
+    await writeFile(arquivo, conteudo, 'utf8');
+
+    const resultado = await prepararSeedBens(arquivo, [municipio]);
+
+    expect(resultado.payloads).toHaveLength(1);
+    expect(resultado.payloads[0]?.pai.codigo_unico).toBe('VAL-EAT-E-002');
+    expect(resultado.pendenciasMunicipio).toHaveLength(1);
+    expect(resultado.pendenciasMunicipio[0]?.codigoUnicoInstalacao).toBe(
+      'ABR-EAT-E-001',
+    );
+    expect(resultado.pendenciasMunicipio[0]?.motivo).toContain(
+      'ID_BEM coincide com o código da instalação pai',
+    );
+  });
 });

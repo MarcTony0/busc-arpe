@@ -32,8 +32,21 @@ export interface ResultadoAgrupamento {
 }
 
 function obterSigla(codigoUnicoInstalacao: string): string | null {
-  const sigla = codigoUnicoInstalacao.split('-')[1]?.trim().toUpperCase();
-  return sigla || null;
+  const blocos = codigoUnicoInstalacao
+    .split('-')
+    .map((bloco) => bloco.trim().toUpperCase());
+
+  for (const bloco of blocos) {
+    if (siglaConhecida(bloco)) {
+      return bloco;
+    }
+  }
+
+  if (blocos[0] === 'NOVO' && blocos.length > 2) {
+    return blocos[2] || null;
+  }
+
+  return blocos[1] || null;
 }
 
 function siglaConhecida(
@@ -56,14 +69,25 @@ function obterSistema(sigla: string | null): TipoSistema {
 function interpretarCondicaoOperacional(condicao: string): SituacaoBem | null {
   const condicaoNormalizada = normalizarTexto(condicao);
 
-  if (condicaoNormalizada === 'operando') return SituacaoBem.OPERANDO;
+  if (
+    condicaoNormalizada === 'operando' ||
+    condicaoNormalizada === 'em operacao'
+  ) {
+    return SituacaoBem.OPERANDO;
+  }
   if (CONDICOES_INOPERANTES.has(condicaoNormalizada)) {
     return SituacaoBem.INOPERANTE;
   }
-  if (CONDICOES_NAO_INFORMADAS.has(condicaoNormalizada)) {
+  if (
+    CONDICOES_NAO_INFORMADAS.has(condicaoNormalizada) ||
+    condicaoNormalizada === 'n/a'
+  ) {
     return SituacaoBem.NAO_INFORMADO;
   }
-  if (condicaoNormalizada.startsWith('inoperante')) {
+  if (
+    condicaoNormalizada.startsWith('inoperante') ||
+    condicaoNormalizada.startsWith('desativad')
+  ) {
     return SituacaoBem.INOPERANTE;
   }
 
@@ -157,10 +181,21 @@ export function agruparInstalacoes(
     equipamentosPorInstalacao,
     ([codigoUnicoInstalacao, equipamentos]): GrupoInstalacao => {
       const sigla = obterSigla(codigoUnicoInstalacao);
-      const tipoSistema = obterSistema(sigla);
+      let tipoSistema = obterSistema(sigla);
+      if (tipoSistema === seedConfig.sistemaDesconhecido) {
+        const servico = equipamentos[0]?.dadosOriginais?.['SERVICO'];
+        if (typeof servico === 'string') {
+          const servicoNormalizado = normalizarTexto(servico);
+          if (servicoNormalizado.includes('agua')) {
+            tipoSistema = TipoSistema.SAA;
+          } else if (servicoNormalizado.includes('esgoto')) {
+            tipoSistema = TipoSistema.SES;
+          }
+        }
+      }
       const categoria = sigla ?? 'N/I';
 
-      if (sigla === null) {
+      if (sigla === null && tipoSistema === seedConfig.sistemaDesconhecido) {
         avisos.push({
           codigoUnicoInstalacao,
           motivo:

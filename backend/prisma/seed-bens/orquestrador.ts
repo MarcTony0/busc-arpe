@@ -3,8 +3,13 @@ import type { PendenciaAssociacaoMunicipio } from './associador-municipios';
 import { associarMunicipios } from './associador-municipios';
 import { agruparInstalacoes } from './agrupador-instalacoes';
 import { lerArquivoBens, type AvisoLeitura } from './arquivo-reader';
-import { montarPayloadsBem, type PayloadGrupoBem } from './montador-payloads';
+import {
+  montarPayloadsBem,
+  separarInconsistenciasValores,
+  type PayloadGrupoBem,
+} from './montador-payloads';
 import type { AvisoAgrupamento } from './agrupador-instalacoes';
+import { separarColisoesCodigo } from './separador-colisoes';
 
 export interface ResumoPreparacaoSeedBens {
   linhasLidas: number;
@@ -30,11 +35,19 @@ export async function prepararSeedBens(
     resultadoAgrupamento.grupos,
     municipios,
   );
-  const payloads = montarPayloadsBem(associacao.gruposAssociados);
+  const separacaoColisoes = separarColisoesCodigo(associacao.gruposAssociados);
+  const { gruposConsistentes, pendencias: pendenciasInconsistentes } =
+    separarInconsistenciasValores(separacaoColisoes.gruposValidos);
+  const payloads = montarPayloadsBem(gruposConsistentes);
+  const pendenciasTotais = [
+    ...associacao.pendencias,
+    ...separacaoColisoes.pendencias,
+    ...pendenciasInconsistentes,
+  ];
 
   return {
     payloads,
-    pendenciasMunicipio: associacao.pendencias,
+    pendenciasMunicipio: pendenciasTotais,
     resumo: {
       linhasLidas: resultadoLeitura.linhas.length,
       bensPais: payloads.length,

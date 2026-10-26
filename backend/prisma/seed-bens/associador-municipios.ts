@@ -48,6 +48,22 @@ function criarIndiceMunicipios(
   return indice;
 }
 
+const ALIAS_MUNICIPIOS: Record<string, string> = {
+  'ilha de itamaraca': 'itamaraca',
+  'sao caitano': 'sao caetano',
+  'belem de sao francisco': 'belem do sao francisco',
+  'iguaraci': 'iguaracy',
+};
+
+function resolverMunicipio(
+  nomeInformado: string,
+  indice: Map<string, MunicipioDominio>,
+): MunicipioDominio | undefined {
+  const normalizado = normalizarTexto(nomeInformado);
+  const nomeBusca = ALIAS_MUNICIPIOS[normalizado] ?? normalizado;
+  return indice.get(nomeBusca);
+}
+
 export function associarMunicipios(
   grupos: GrupoInstalacao[],
   municipios: MunicipioDominio[],
@@ -59,7 +75,7 @@ export function associarMunicipios(
   for (const grupo of grupos) {
     const municipiosDasLinhas = grupo.equipamentos.map((equipamento) => ({
       equipamento,
-      municipio: indiceMunicipios.get(normalizarTexto(equipamento.municipio)),
+      municipio: resolverMunicipio(equipamento.municipio, indiceMunicipios),
     }));
     const municipiosDoGrupo = new Map<number, string>();
     for (const { municipio } of municipiosDasLinhas) {
@@ -67,11 +83,9 @@ export function associarMunicipios(
     }
 
     const municipioDivergente = municipiosDoGrupo.size > 1;
-    const municipioDesconhecido = municipiosDasLinhas.some(
-      ({ municipio }) => municipio === undefined,
-    );
+    const semMunicipioValido = municipiosDoGrupo.size === 0;
 
-    if (municipioDivergente || municipioDesconhecido) {
+    if (municipioDivergente || semMunicipioValido) {
       const nomesMunicipios = Array.from(municipiosDoGrupo.values()).join(', ');
       for (const { equipamento, municipio } of municipiosDasLinhas) {
         if (!municipio) {

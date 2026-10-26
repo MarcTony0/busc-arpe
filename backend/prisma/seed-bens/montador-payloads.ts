@@ -5,7 +5,10 @@ import {
   derivarSituacaoFilho,
   type GrupoInstalacao,
 } from './agrupador-instalacoes';
-import type { GrupoComMunicipio } from './associador-municipios';
+import type {
+  GrupoComMunicipio,
+  PendenciaAssociacaoMunicipio,
+} from './associador-municipios';
 import type { LinhaBemPlanilha } from './arquivo-reader';
 import { montarIndicesBusca } from './indice-busca';
 
@@ -59,21 +62,73 @@ function conferirValoresDaInstalacao(grupo: GrupoInstalacao): void {
   ];
 
   for (const coluna of colunasDaInstalacao) {
-    const valorReferencia = valorComparavel(obterValor(primeiraLinha, coluna));
-    const divergentes = grupo.equipamentos.filter(
-      (linha) => valorComparavel(obterValor(linha, coluna)) !== valorReferencia,
-    );
+    const valoresInformados = new Map<string, LinhaBemPlanilha[]>();
 
-    if (divergentes.length > 0) {
-      const linhas = [
-        primeiraLinha.numeroLinha,
-        ...divergentes.map((linha) => linha.numeroLinha),
-      ].join(', ');
-      throw new Error(
-        `Instalação "${grupo.codigoUnicoInstalacao}" possui valores inconsistentes para ${coluna} nas linhas ${linhas}.`,
-      );
+    for (const linha of grupo.equipamentos) {
+      const valor = valorComparavel(obterValor(linha, coluna));
+      if (!valor || valor === 'n/i' || valor === 'nao informado') {
+        continue;
+      }
+      const lista = valoresInformados.get(valor) ?? [];
+      lista.push(linha);
+      valoresInformados.set(valor, lista);
+    }
+
+    if (valoresInformados.size > 1) {
+      let maiorFrequencia = 0;
+      let totalInformados = 0;
+      for (const lista of valoresInformados.values()) {
+        totalInformados += lista.length;
+        if (lista.length > maiorFrequencia) {
+          maiorFrequencia = lista.length;
+        }
+      }
+
+      if (maiorFrequencia / totalInformados <= 0.5) {
+        const divergentes = grupo.equipamentos.filter(
+          (linha) =>
+            valorComparavel(obterValor(linha, coluna)) !==
+            valorComparavel(obterValor(primeiraLinha, coluna)),
+        );
+        const linhas = [
+          primeiraLinha.numeroLinha,
+          ...divergentes.map((linha) => linha.numeroLinha),
+        ].join(', ');
+        throw new Error(
+          `Instalação "${grupo.codigoUnicoInstalacao}" possui valores inconsistentes para ${coluna} nas linhas ${linhas}.`,
+        );
+      }
     }
   }
+}
+
+export function separarInconsistenciasValores(
+  grupos: GrupoComMunicipio[],
+): {
+  gruposConsistentes: GrupoComMunicipio[];
+  pendencias: PendenciaAssociacaoMunicipio[];
+} {
+  const gruposConsistentes: GrupoComMunicipio[] = [];
+  const pendencias: PendenciaAssociacaoMunicipio[] = [];
+
+  for (const grupo of grupos) {
+    try {
+      conferirValoresDaInstalacao(grupo);
+      gruposConsistentes.push(grupo);
+    } catch (erro) {
+      const mensagem = erro instanceof Error ? erro.message : String(erro);
+      for (const equip of grupo.equipamentos) {
+        pendencias.push({
+          codigoUnicoInstalacao: grupo.codigoUnicoInstalacao,
+          numeroLinha: equip.numeroLinha,
+          municipioInformado: equip.municipio,
+          motivo: mensagem,
+        });
+      }
+    }
+  }
+
+  return { gruposConsistentes, pendencias };
 }
 
 function criarObjetoJson(
@@ -105,12 +160,34 @@ function criarObjetoJson(
 }
 
 function criarDadosComplementaresPai(
-  linha: LinhaBemPlanilha,
+  grupo: GrupoInstalacao,
 ): Prisma.InputJsonObject {
   const colunasPai = new Set(
     seedConfig.colunasDadosComplementaresPai.map(normalizarCabecalho),
   );
-  return criarObjetoJson(linha.dadosOriginais, colunasPai);
+  const dadosMesclados: Record<string, unknown> = {};
+
+  for (const coluna of seedConfig.colunasDadosComplementaresPai) {
+    const cabecalho = normalizarCabecalho(coluna);
+    for (const equip of grupo.equipamentos) {
+      const val = equip.dadosOriginais[cabecalho];
+      if (
+        val !== null &&
+        val !== undefined &&
+        val !== '' &&
+        String(val).trim().toUpperCase() !== 'N/I'
+      ) {
+        dadosMesclados[cabecalho] = val;
+        break;
+      }
+    }
+    if (dadosMesclados[cabecalho] === undefined) {
+      dadosMesclados[cabecalho] =
+        grupo.equipamentos[0]?.dadosOriginais[cabecalho] ?? null;
+    }
+  }
+
+  return criarObjetoJson(dadosMesclados, colunasPai);
 }
 
 function criarDadosComplementaresFilho(
@@ -170,6 +247,22 @@ function conferirCodigosUnicos(grupos: GrupoComMunicipio[]): void {
 }
 
 function obterNomeInstalacao(grupo: GrupoInstalacao): string {
+  const contagens = new Map<string, { nome: string; count: number }>();
+  for (const equip of grupo.equipamentos) {
+    const nome = equip.nomeInstalacao.trim();
+    if (!nome || nome.toUpperCase() === 'N/I') continue;
+    const norm = normalizarTexto(nome);
+    const atual = contagens.get(norm) ?? { nome, count: 0 };
+    atual.count++;
+    contagens.set(norm, atual);
+  }
+  if (contagens.size > 0) {
+    let melhor = { nome: '', count: -1 };
+    for (const item of contagens.values()) {
+      if (item.count > melhor.count) melhor = item;
+    }
+    return melhor.nome;
+  }
   const nome = grupo.equipamentos[0]?.nomeInstalacao.trim();
   if (!nome) {
     throw new Error(
@@ -177,6 +270,26 @@ function obterNomeInstalacao(grupo: GrupoInstalacao): string {
     );
   }
   return nome;
+}
+
+function obterEnderecoInstalacao(grupo: GrupoInstalacao): string | null {
+  const contagens = new Map<string, { endereco: string; count: number }>();
+  for (const equip of grupo.equipamentos) {
+    const end = equip.endereco?.trim();
+    if (!end || end.toUpperCase() === 'N/I') continue;
+    const norm = normalizarTexto(end);
+    const atual = contagens.get(norm) ?? { endereco: end, count: 0 };
+    atual.count++;
+    contagens.set(norm, atual);
+  }
+  if (contagens.size > 0) {
+    let melhor = { endereco: '', count: -1 };
+    for (const item of contagens.values()) {
+      if (item.count > melhor.count) melhor = item;
+    }
+    return melhor.endereco;
+  }
+  return grupo.equipamentos[0]?.endereco || null;
 }
 
 function obterNomeEquipamento(equipamento: LinhaBemPlanilha): string {
@@ -227,7 +340,7 @@ export function montarPayloadsBem(
     const pai: Prisma.BemCreateInput = {
       codigo_unico: grupo.codigoUnicoInstalacao,
       nome: obterNomeInstalacao(grupo),
-      endereco: primeiraLinha.endereco || null,
+      endereco: obterEnderecoInstalacao(grupo),
       municipio: { connect: { id: grupo.municipioId } },
       latitude: grupo.latitude,
       longitude: grupo.longitude,
@@ -235,7 +348,7 @@ export function montarPayloadsBem(
       tipo_sistema: grupo.tipoSistema,
       situacao: grupo.situacao,
       is_pai: true,
-      dados_complementares: criarDadosComplementaresPai(primeiraLinha),
+      dados_complementares: criarDadosComplementaresPai(grupo),
       busca_texto: buscaTextoPai,
     };
 
