@@ -1,31 +1,139 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.75rem;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+
   /* Paleta oficial buscARPE */
-  --saa-blue: #1D6FB8;
-  --ses-teal: #1A9E8F;
+  --brand: #1d6fb8;
+  --brand-deep: #144d80;
+  --saa: #1D6FB8;
+  --ses: #1A9E8F;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-saa: var(--saa-blue);
-  --color-ses: var(--ses-teal);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-saa: var(--saa);
+  --color-ses: var(--ses);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Leaflet container */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #f1f5f9;
+  z-index: 1;
+}
+
+.leaflet-control-zoom a,
+.leaflet-bar a {
+  border: none !important;
+  color: var(--foreground) !important;
+  background: var(--card) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.leaflet-bar {
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.8) !important;
+  font-size: 10px !important;
+  color: #64748b !important;
+}
+
+/* Estilos de marcadores de bens */
+.marker-pin {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px 999px 999px 2px;
+  transform: rotate(-45deg);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.marker-pin span {
+  transform: rotate(45deg);
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.marker-pin[data-tipo="SAA"] {
+  background: var(--saa);
+}
+
+.marker-pin[data-tipo="SES"] {
+  background: var(--ses);
+}
+
+.marker-pin[data-situacao="Inoperante"],
+.marker-pin[data-situacao="INOPERANTE"] {
+  opacity: 0.4;
+}
+
+.marker-pin[data-active="true"] {
+  transform: rotate(-45deg) scale(1.22);
+  outline: 3px solid rgba(29, 111, 184, 0.4);
+}
+
+/* Clusters de marcadores */
+.bem-cluster {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bem-cluster[data-mix="SAA"] {
+  background: var(--saa);
+}
+
+.bem-cluster[data-mix="SES"] {
+  background: var(--ses);
+}
+
+.bem-cluster[data-mix="MISTO"] {
+  background: conic-gradient(var(--saa) 0 50%, var(--ses) 50% 100%);
 }

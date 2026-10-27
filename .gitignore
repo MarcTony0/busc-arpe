@@ -3,6 +3,7 @@
 .claude/
 .windsurf/
 skills-lock.json
+referencia-lovable/
 
 # Dependências (nunca versionar)
 node_modules/

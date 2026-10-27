@@ -133,11 +133,11 @@ Portar a visualização central do Leaflet para o Next.js, carregando a bibliote
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar componente Map isolado com `use client` e carregamento dinâmico sem SSR
-- [ ] Definir coordenadas centrais e zoom de abertura com enquadramento de Pernambuco (HU-01 CA-02)
-- [ ] Consumir os dados leves de `GET /bens` e plotar os marcadores dos Bens Pai (HU-01 CA-01, CA-03)
-- [ ] Criar ícones estilizados para SAA (azul) e SES (verde-azulado) (HU-01 CA-04)
-- [ ] Aplicar estilo de opacidade reduzida nos marcadores com situação "Inoperante" (HU-01 CA-05)
+- [x] Criar componente Map isolado com `use client` e carregamento dinâmico sem SSR
+- [x] Definir coordenadas centrais e zoom de abertura com enquadramento de Pernambuco (HU-01 CA-02)
+- [x] Consumir os dados leves de `GET /bens` e plotar os marcadores dos Bens Pai (HU-01 CA-01, CA-03)
+- [x] Criar ícones estilizados para SAA (azul) e SES (verde-azulado) (HU-01 CA-04)
+- [x] Aplicar estilo de opacidade reduzida nos marcadores com situação "Inoperante" (HU-01 CA-05)
 
 ### Card 2.2: [Frontend] Clusterização Numérica e Cores de Sistema
 
