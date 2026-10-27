@@ -64,11 +64,11 @@ Definir o schema do Prisma no PostgreSQL conforme a arquitetura de 3 camadas esp
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Escrever o modelo Municipio no `schema.prisma`
-- [ ] Escrever o modelo Bem com auto-relacionamento (`bem_pai` e `filhos`) e campo `dados_complementares Json`
-- [ ] Adicionar campo `busca_texto` com índice para acelerar a busca `ILIKE`
-- [ ] Escrever os modelos Documento e Usuario
-- [ ] Executar `npx prisma migrate dev --name init_database` e verificar tabelas criadas no banco
+- [x] Escrever o modelo Municipio no `schema.prisma`
+- [x] Escrever o modelo Bem com auto-relacionamento (`bem_pai` e `filhos`) e campo `dados_complementares Json`
+- [x] Adicionar campo `busca_texto` com índice para acelerar a busca `ILIKE`
+- [x] Escrever os modelos Documento e Usuario
+- [x] Executar `npx prisma migrate dev --name init_database` e verificar tabelas criadas no banco
 
 ### Card 1.2: [Backend] Script de Carga da Tabela de Domínio Geográfico
 
@@ -80,11 +80,11 @@ Construir a base de domínio geográfico interna para garantir que os 184 munic�
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar o arquivo `municipios.csv` com as colunas: nome, geres, mrae
-- [ ] Validar ausência de duplicatas e anotações ruidosas no arquivo CSV
-- [ ] Criar serviço ou script de seed para popular a tabela Municipio
-- [ ] Implementar conferência automática por script garantindo a inserção exata dos 185 registros
-- [ ] Adicionar tratamento de normalização (sem acentos e minúsculas) na coluna `nome_normalizado`
+- [x] Criar o arquivo `municipios.csv` com as colunas: nome, geres, mrae
+- [x] Validar ausência de duplicatas e anotações ruidosas no arquivo CSV
+- [x] Criar serviço ou script de seed para popular a tabela Municipio
+- [x] Implementar conferência automática por script garantindo a inserção exata dos 185 registros
+- [x] Adicionar tratamento de normalização (sem acentos e minúsculas) na coluna `nome_normalizado`
 
 ### Card 1.3: [Backend] Script de Seed da Planilha Oficial com Derivação dos Bens Pai
 
@@ -96,13 +96,13 @@ Desenvolver o script de carga de dados oficial a partir da planilha de equipamen
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar módulo de seed e arquivo de mapeamento `seed-config.ts`
-- [ ] Implementar leitura de arquivo (CSV/XLSX) e conversão de coordenadas (vírgula para ponto)
-- [ ] Implementar agrupamento de linhas pelo código da instalação e cálculo de média de lat/lng
-- [ ] Implementar regra de derivação de situação do pai baseada no estado dos filhos
-- [ ] Fazer o casamento exato de município normalizado com a tabela de domínio
-- [ ] Popular `busca_texto` em caixa baixa e sem acentos
-- [ ] Inserir os dados em lotes (batch) com lógica de upsert e emitir log de conferência ao final
+- [x] Criar módulo de seed e arquivo de mapeamento `seed-config.ts`
+- [x] Implementar leitura de arquivo (CSV/XLSX) e conversão de coordenadas (vírgula para ponto)
+- [x] Implementar agrupamento de linhas pelo código da instalação e cálculo de média de lat/lng
+- [x] Implementar regra de derivação de situação do pai baseada no estado dos filhos
+- [x] Fazer o casamento exato de município normalizado com a tabela de domínio
+- [x] Popular `busca_texto` em caixa baixa e sem acentos
+- [x] Inserir os dados em lotes (batch) com lógica de upsert e emitir log de conferência ao final
 
 ### Card 1.4: [Backend] Endpoints de Leitura: Listagem Leve, Detalhe e Filtros
 
@@ -114,12 +114,12 @@ Criar as rotas da API que abastecerão o mapa e os painéis de visualização. O
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar módulo e controller BensModule no NestJS
-- [ ] Implementar `GET /filtros` retornando listas dinâmicas para a interface
-- [ ] Implementar `GET /bens` recebendo query params (mrae, geres, municipio, sistema, categoria, situacao, q)
-- [ ] Adicionar filtro de texto por `ILIKE` na coluna `busca_texto` com normalização de entrada
-- [ ] Implementar `GET /bens/:id` com dados detalhados do pai e relação com filhos e documentos
-- [ ] Testar todos os endpoints e validar performance das queries
+- [x] Criar módulo e controller BensModule no NestJS
+- [x] Implementar `GET /filtros` retornando listas dinâmicas para a interface
+- [x] Implementar `GET /bens` recebendo query params (mrae, geres, municipio, sistema, categoria, situacao, q)
+- [x] Adicionar filtro de texto por `ILIKE` na coluna `busca_texto` com normalização de entrada
+- [x] Implementar `GET /bens/:id` com dados detalhados do pai e relação com filhos e documentos
+- [x] Testar todos os endpoints e validar performance das queries
 
 ## Sprint 2 (20-23/10) — Front: Mapa, Filtros & Busca
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import type { Prisma, PrismaClient } from '../../generated/prisma/client';
-import { SituacaoBem, TipoSistema } from '../../generated/prisma/enums';
+import type { Prisma, PrismaClient } from '../../src/generated/prisma/client';
+import { SituacaoBem, TipoSistema } from '../../src/generated/prisma/enums';
 import type { PayloadGrupoBem } from './montador-payloads';
 import {
   persistirPayloadsBem,

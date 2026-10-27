@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { SituacaoBem, TipoSistema } from '../../generated/prisma/enums';
+import { SituacaoBem, TipoSistema } from '../../src/generated/prisma/enums';
 import type { GrupoComMunicipio } from './associador-municipios';
 import type { LinhaBemPlanilha } from './arquivo-reader';
 import { separarColisoesCodigo } from './separador-colisoes';

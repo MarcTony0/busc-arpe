@@ -1,4 +1,4 @@
-import { TipoSistema } from '../generated/prisma/enums';
+import { TipoSistema } from '../src/generated/prisma/enums';
 
 export const seedConfig = {
   colunas: {

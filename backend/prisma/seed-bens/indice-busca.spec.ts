@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { SituacaoBem } from '../../generated/prisma/enums';
+import { SituacaoBem } from '../../src/generated/prisma/enums';
 import { agruparInstalacoes } from './agrupador-instalacoes';
 import {
   associarMunicipios,

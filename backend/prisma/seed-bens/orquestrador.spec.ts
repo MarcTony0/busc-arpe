@@ -2,7 +2,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { SituacaoBem, TipoSistema } from '../../generated/prisma/enums';
+import { SituacaoBem, TipoSistema } from '../../src/generated/prisma/enums';
 import { seedConfig } from '../seed-config';
 import { prepararSeedBens, type PreparacaoSeedBens } from './orquestrador';
 

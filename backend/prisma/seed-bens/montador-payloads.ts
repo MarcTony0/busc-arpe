@@ -1,4 +1,4 @@
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '../../src/generated/prisma/client';
 import { normalizarTexto } from '../normalizar-texto';
 import { seedConfig } from '../seed-config';
 import {

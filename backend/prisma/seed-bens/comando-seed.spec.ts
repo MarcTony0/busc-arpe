@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import type { Prisma, PrismaClient } from '../../generated/prisma/client';
+import type { Prisma, PrismaClient } from '../../src/generated/prisma/client';
 import { seedConfig } from '../seed-config';
 import {
   executarComandoSeedBens,

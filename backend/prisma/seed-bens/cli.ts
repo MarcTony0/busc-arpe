@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { access } from 'node:fs/promises';
 import path from 'node:path';
-import { PrismaClient } from '../../generated/prisma/client';
+import { PrismaClient } from '../../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { executarComandoSeedBens } from './comando-seed';

@@ -1,4 +1,4 @@
-import { SituacaoBem, TipoSistema } from '../../generated/prisma/enums';
+import { SituacaoBem, TipoSistema } from '../../src/generated/prisma/enums';
 import { normalizarTexto } from '../normalizar-texto';
 import { seedConfig } from '../seed-config';
 import type { GrupoComMunicipio } from './associador-municipios';
