@@ -20,6 +20,42 @@ export interface BemLeve {
   municipio: MunicipioResumo;
 }
 
+export interface BemFilhoResumo {
+  id: number;
+  codigo_unico: string;
+  nome: string;
+  situacao: SituacaoBem;
+  categoria: string;
+  dados_complementares?: Record<string, unknown> | null;
+}
+
+export interface DocumentoResumo {
+  id: number;
+  nome: string;
+  url: string;
+  tipo: string | null;
+}
+
+export interface BemDetalhe {
+  id: number;
+  codigo_unico: string;
+  nome: string;
+  endereco: string | null;
+  municipio_id: number;
+  municipio: MunicipioResumo;
+  latitude: number | null;
+  longitude: number | null;
+  categoria: string;
+  tipo_sistema: TipoSistema;
+  situacao: SituacaoBem;
+  is_pai: boolean;
+  dados_complementares?: Record<string, unknown> | null;
+  filhos: BemFilhoResumo[];
+  documentos: DocumentoResumo[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface FiltrosResponse {
   mraes: string[];
   geres: string[];

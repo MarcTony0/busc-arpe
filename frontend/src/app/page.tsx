@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import Map from '@/components/map';
 import { TopBar } from '@/components/layout/TopBar';
 import { FiltersPanel } from '@/components/filters/FiltersPanel';
+import { SystemDetails } from '@/components/details/SystemDetails';
 import {
   TODOS,
   FILTROS_INICIAIS,
@@ -171,6 +172,13 @@ export default function Home() {
           onChange={setFiltros}
           onRedefinir={redefinirFiltros}
         />
+        {/* Painel flutuante de detalhes do bem selecionado */}
+        {selecionado && (
+          <SystemDetails
+            bemId={selecionado.id}
+            onFechar={() => setSelecionado(null)}
+          />
+        )}
       </main>
     </div>
   );

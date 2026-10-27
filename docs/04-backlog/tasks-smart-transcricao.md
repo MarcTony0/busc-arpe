@@ -200,11 +200,11 @@ Portar a gaveta flutuante de detalhes que se abre ao clicar em qualquer marcador
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Integrar evento de clique no marcador do mapa para abrir a gaveta de detalhes e buscar `GET /bens/:id`
-- [ ] Implementar aba "Visão Geral" com exibição dos 7 campos cadastrais do Bem Pai (HU-06)
-- [ ] Implementar aba "Equipamentos" com lista rolável dos filhos e estado vazio (HU-07 CA-01, CA-02)
-- [ ] Implementar aba "Documentos" com links externos (`target="_blank"`) e estado vazio (HU-08 CA-01, CA-02)
-- [ ] Garantir fechamento fluido da gaveta pelo botão "X" ou clique fora
+- [x] Integrar evento de clique no marcador do mapa para abrir a gaveta de detalhes e buscar `GET /bens/:id`
+- [x] Implementar aba "Visão Geral" com exibição dos 7 campos cadastrais do Bem Pai (HU-06)
+- [x] Implementar aba "Equipamentos" com lista rolável dos filhos e estado vazio (HU-07 CA-01, CA-02)
+- [x] Implementar aba "Documentos" com links externos (`target="_blank"`) e estado vazio (HU-08 CA-01, CA-02)
+- [x] Garantir fechamento fluido da gaveta pelo botão "X" ou clique fora
 
 ### Card 3.2: [Backend] Autenticação com JWT em Cookie HttpOnly e Guards
 
