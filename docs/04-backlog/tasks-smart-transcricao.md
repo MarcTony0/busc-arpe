@@ -165,11 +165,11 @@ Construir o painel lateral retrátil (gaveta) contendo os filtros em formato san
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Portar gaveta lateral retrátil acionada pelo botão "Filtros" do cabeçalho
-- [ ] Criar acordeom com os 6 filtros (MRAE, GERES, Município, Sistema, Categoria, Situação)
-- [ ] Implementar regra de cascata: GERES selecionada filtra a lista de Municípios (HU-05 CA-01)
-- [ ] Implementar lógica cumulativa ("E") sincronizada com as requisições de `GET /bens` (HU-05 CA-02)
-- [ ] Adicionar botão "Redefinir filtros" para resetar todas as opções e restaurar o mapa (HU-05 CA-03)
+- [x] Portar gaveta lateral retrátil acionada pelo botão "Filtros" do cabeçalho
+- [x] Criar acordeom com os 6 filtros (MRAE, GERES, Município, Sistema, Categoria, Situação)
+- [x] Implementar regra de cascata: GERES selecionada filtra a lista de Municípios (HU-05 CA-01)
+- [x] Implementar lógica cumulativa ("E") sincronizada com as requisições de `GET /bens` (HU-05 CA-02)
+- [x] Adicionar botão "Redefinir filtros" para resetar todas as opções e restaurar o mapa (HU-05 CA-03)
 
 ### Card 2.4: [Frontend] Barra de Busca Livre, Contador e Estado Vazio
 
@@ -181,12 +181,12 @@ Implementar a barra de busca textual no cabeçalho com atraso de digitação (de
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Portar campo de busca textual no cabeçalho com ícone e controle de estado
-- [ ] Aplicar debounce de 300ms na digitação para evitar excesso de requisições
-- [ ] Integrar busca com os filtros ativos e enviar termo normalizado à API (HU-04 CA-01, CA-02, CA-03)
-- [ ] Atualizar badge do contador com o total de bens retornados no recorte atual (HU-04 CA-04)
-- [ ] Criar estado vazio com card "Nenhum bem encontrado" e mapa sem marcadores (HU-04 CA-05)
-- [ ] Adicionar ação ao botão "Limpar" no cabeçalho para restaurar o estado inicial
+- [x] Portar campo de busca textual no cabeçalho com ícone e controle de estado
+- [x] Aplicar debounce de 300ms na digitação para evitar excesso de requisições
+- [x] Integrar busca com os filtros ativos e enviar termo normalizado à API (HU-04 CA-01, CA-02, CA-03)
+- [x] Atualizar badge do contador com o total de bens retornados no recorte atual (HU-04 CA-04)
+- [x] Criar estado vazio com card "Nenhum bem encontrado" e mapa sem marcadores (HU-04 CA-05)
+- [x] Adicionar ação ao botão "Limpar" no cabeçalho para restaurar o estado inicial
 
 ## Sprint 3 (24-26/10) — Detalhes, Docs & Auth
 

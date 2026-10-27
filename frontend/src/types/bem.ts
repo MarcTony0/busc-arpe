@@ -31,3 +31,23 @@ export interface FiltrosResponse {
 
 export const PERNAMBUCO_CENTER: [number, number] = [-8.4, -37.6];
 export const PERNAMBUCO_ZOOM = 7;
+
+export const TODOS = 'TODOS';
+
+export interface FiltrosEstado {
+  mrae: string;
+  geres: string;
+  municipio: string;
+  sistema: string;
+  categoria: string;
+  situacao: string;
+}
+
+export const FILTROS_INICIAIS: FiltrosEstado = {
+  mrae: TODOS,
+  geres: TODOS,
+  municipio: TODOS,
+  sistema: TODOS,
+  categoria: TODOS,
+  situacao: TODOS,
+};
