@@ -27,6 +27,17 @@ export async function seedUsuarios(prismaClient: PrismaClient = prisma): Promise
       const conteudo = fs.readFileSync(caminhoUsuariosLocal, 'utf-8');
       usuariosParaInserir = JSON.parse(conteudo);
       console.log(`🔐 Carregando usuários a partir do arquivo privado usuarios.local.json (${usuariosParaInserir.length} usuários encontrados).`);
+
+      // Remove usuários de exemplo ou não cadastrados na lista oficial
+      const emailsPermitidos = usuariosParaInserir.map((u) => u.email.toLowerCase().trim());
+      const deletados = await prismaClient.usuario.deleteMany({
+        where: {
+          email: { notIn: emailsPermitidos },
+        },
+      });
+      if (deletados.count > 0) {
+        console.log(`🧹 Removidos ${deletados.count} usuário(s) de teste/exemplo do banco.`);
+      }
     } catch (err) {
       console.warn('⚠️ Falha ao ler usuarios.local.json, utilizando credenciais padrão de demonstração:', err);
     }

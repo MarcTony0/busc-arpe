@@ -47,7 +47,7 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
       try {
         setCarregando(true);
         setErro(null);
-        const res = await fetch(`/api/bens/${bemId}`);
+        const res = await fetch(`/api/bens/${bemId}`, { credentials: 'include' });
         if (!res.ok) {
           throw new Error(`Falha ao obter detalhes do bem (${res.status})`);
         }

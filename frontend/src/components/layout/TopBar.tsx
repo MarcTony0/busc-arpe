@@ -1,12 +1,13 @@
 'use client';
 
-import { Eraser, Search, SlidersHorizontal } from 'lucide-react';
+import { Eraser, LogOut, Search, SlidersHorizontal } from 'lucide-react';
 
 interface TopBarProps {
   busca: string;
   onBuscaChange: (valor: string) => void;
   onAbrirFiltros?: () => void;
   onLimpar: () => void;
+  onSair?: () => void;
   filtrosAtivos?: number;
 }
 
@@ -15,6 +16,7 @@ export function TopBar({
   onBuscaChange,
   onAbrirFiltros,
   onLimpar,
+  onSair,
   filtrosAtivos = 0,
 }: TopBarProps) {
   return (
@@ -65,6 +67,17 @@ export function TopBar({
             <Eraser className="size-4" />
             Limpar
           </button>
+          {onSair && (
+            <button
+              type="button"
+              onClick={onSair}
+              className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
+              title="Encerrar sessão"
+            >
+              <LogOut className="size-4" />
+              Sair
+            </button>
+          )}
         </div>
       </div>
     </header>

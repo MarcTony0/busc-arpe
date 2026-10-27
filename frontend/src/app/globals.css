@@ -10,6 +10,9 @@
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --border: #e2e8f0;
+  --secondary: #f1f5f9;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
 
   /* Paleta oficial buscARPE */
   --brand: #1d6fb8;
@@ -26,6 +29,9 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-secondary: var(--secondary);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-brand: var(--brand);
   --color-brand-deep: var(--brand-deep);
   --color-saa: var(--saa);

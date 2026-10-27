@@ -232,11 +232,11 @@ Construir a página de Login (`/login`) contendo o card centralizado com logotip
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar página de login em `/app/login/page.tsx` com o layout centralizado do protótipo
-- [ ] Implementar formulário com validação simples e envio para `/api/auth/login`
-- [ ] Exibir mensagem de erro genérica em vermelho "E-mail ou senha inválidos" (HU-09 CA-02)
-- [ ] Redirecionar com sucesso para `/mapa` ao autenticar (HU-09 CA-01)
-- [ ] Conectar botão "Sair" do cabeçalho chamando logout e redirecionando para `/login` (HU-09 CA-03)
+- [x] Criar página de login em `/app/login/page.tsx` com o layout centralizado do protótipo
+- [x] Implementar formulário com validação simples e envio para `/api/auth/login`
+- [x] Exibir mensagem de erro genérica em vermelho "E-mail ou senha inválidos" (HU-09 CA-02)
+- [x] Redirecionar com sucesso para `/mapa` ao autenticar (HU-09 CA-01)
+- [x] Conectar botão "Sair" do cabeçalho chamando logout e redirecionando para `/login` (HU-09 CA-03)
 
 ### Card 3.4: [Frontend] Proteção de Rotas com middleware.ts
 
@@ -248,11 +248,11 @@ Criar um middleware de segurança no Next.js (`middleware.ts`) na raiz do fronte
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar arquivo `middleware.ts` na raiz do projeto Next.js
-- [ ] Verificar existência do cookie JWT em rotas protegidas (`/mapa`, `/admin`)
-- [ ] Redirecionar usuário não autenticado imediatamente para `/login` (HU-10 CA-01)
-- [ ] Bloquear acesso a `/admin` redirecionando para a rota inicial (HU-10 CA-02)
-- [ ] Garantir que o sistema só exiba funcionalidades de leitura para o Usuário Comum (HU-10 CA-03)
+- [x] Criar arquivo `middleware.ts` na raiz do projeto Next.js
+- [x] Verificar existência do cookie JWT em rotas protegidas (`/mapa`, `/admin`)
+- [x] Redirecionar usuário não autenticado imediatamente para `/login` (HU-10 CA-01)
+- [x] Bloquear acesso a `/admin` redirecionando para a rota inicial (HU-10 CA-02)
+- [x] Garantir que o sistema só exiba funcionalidades de leitura para o Usuário Comum (HU-10 CA-03)
 
 ## Buffer (27-28/10) — Validação & Congelamento
 
