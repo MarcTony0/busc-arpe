@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
 
 import { PERNAMBUCO_CENTER, PERNAMBUCO_ZOOM, type BemLeve } from '@/types/bem';
 

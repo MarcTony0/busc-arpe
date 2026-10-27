@@ -135,5 +135,6 @@ body {
 }
 
 .bem-cluster[data-mix="MISTO"] {
+  background: #1c86a4; /* Fallback D-02: cor intermediária entre azul SAA e verde-azulado SES */
   background: conic-gradient(var(--saa) 0 50%, var(--ses) 50% 100%);
 }

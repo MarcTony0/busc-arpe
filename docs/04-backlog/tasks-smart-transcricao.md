@@ -149,11 +149,11 @@ Integrar o plugin `leaflet.markercluster` ao mapa para agrupar bens próximos em
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Instalar e configurar `leaflet.markercluster` no componente do mapa
-- [ ] Customizar `iconCreateFunction` para gerar clusters com o total numérico de bens (HU-02 CA-01, CA-02, CA-03)
-- [ ] Aplicar estilo azul nos clusters homogêneos de SAA e verde-azulado para SES (HU-02 CA-04)
-- [ ] Implementar cluster misto (bicolor via `conic-gradient` ou cor mista de fallback D-02) (HU-02 CA-05)
-- [ ] Validar comportamento suave de clique no cluster abrindo o zoom da região
+- [x] Instalar e configurar `leaflet.markercluster` no componente do mapa
+- [x] Customizar `iconCreateFunction` para gerar clusters com o total numérico de bens (HU-02 CA-01, CA-02, CA-03)
+- [x] Aplicar estilo azul nos clusters homogêneos de SAA e verde-azulado para SES (HU-02 CA-04)
+- [x] Implementar cluster misto (bicolor via `conic-gradient` ou cor mista de fallback D-02) (HU-02 CA-05)
+- [x] Validar comportamento suave de clique no cluster abrindo o zoom da região
 
 ### Card 2.3: [Frontend] Gaveta Lateral de Filtros em Cascata (Sanfona)
 
