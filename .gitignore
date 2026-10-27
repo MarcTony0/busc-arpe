@@ -34,6 +34,8 @@ generated/
 .env.*.local
 *.env
 *.pem
+*.local.json
+usuarios.local.json
 
 # Planilhas e dados locais de ingestão
 *.xlsx

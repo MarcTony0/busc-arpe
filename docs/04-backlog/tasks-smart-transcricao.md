@@ -14,11 +14,11 @@ Esta tarefa tem como objetivo inicializar a infraestrutura do backend do buscARP
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar projeto NestJS na pasta `/backend` com TypeScript
-- [ ] Instalar e inicializar o Prisma (`@prisma/client` e `prisma`)
-- [ ] Configurar variáveis de ambiente (`.env`) com a string de conexão do PostgreSQL
-- [ ] Criar módulo e controller de health check (`GET /health`)
-- [ ] Rodar o servidor via `npm run start:dev` e validar resposta `200 OK` na porta 3001
+- [x] Criar projeto NestJS na pasta `/backend` com TypeScript
+- [x] Instalar e inicializar o Prisma (`@prisma/client` e `prisma`)
+- [x] Configurar variáveis de ambiente (`.env`) com a string de conexão do PostgreSQL
+- [x] Criar módulo e controller de health check (`GET /health`)
+- [x] Rodar o servidor via `npm run start:dev` e validar resposta `200 OK` na porta 3001
 
 ### Card 0.2: [Frontend] Setup do Next.js (App Router), Tailwind v4 e Shadcn/ui
 
@@ -30,12 +30,12 @@ Configurar o ambiente base do frontend na pasta `/frontend` utilizando Next.js c
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Inicializar projeto Next.js em `/frontend` com TypeScript e App Router
-- [ ] Configurar TailwindCSS v4 e PostCSS
-- [ ] Configurar tokens de cores no CSS global (paleta oficial SAA `#1D6FB8` e SES `#1A9E8F`)
-- [ ] Instalar pacotes essenciais (`lucide-react`, `clsx`, `tailwind-merge`, `class-variance-authority`)
-- [ ] Instalar componentes base do shadcn (`button`, `input`, `tabs`, `dialog`)
-- [ ] Executar `npm run dev` e validar que a aplicação sobe limpa na porta 3000
+- [x] Inicializar projeto Next.js em `/frontend` com TypeScript e App Router
+- [x] Configurar TailwindCSS v4 e PostCSS
+- [x] Configurar tokens de cores no CSS global (paleta oficial SAA `#1D6FB8` e SES `#1A9E8F`)
+- [x] Instalar pacotes essenciais (`lucide-react`, `clsx`, `tailwind-merge`, `class-variance-authority`)
+- [x] Instalar componentes base do shadcn (`button`, `input`, `tabs`, `dialog`)
+- [x] Executar `npm run dev` e validar que a aplicação sobe limpa na porta 3000
 
 ### Card 0.3: [Fullstack] Integração Next.js ↔ NestJS via Rewrites
 
@@ -47,10 +47,10 @@ Configurar a comunicação transparente entre o frontend Next.js (porta 3000) e 
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Adicionar configuração de rewrites no `next.config.ts` apontando `/api/:path*` para `http://localhost:3001/:path*`
-- [ ] Criar uma página de teste temporária no Next.js chamando `/api/health`
-- [ ] Testar no navegador se a requisição responde sem erros de CORS
-- [ ] Validar que os dois serviços conseguem rodar simultaneamente em terminais separados
+- [x] Adicionar configuração de rewrites no `next.config.ts` apontando `/api/:path*` para `http://localhost:3001/:path*`
+- [x] Criar uma página de teste temporária no Next.js chamando `/api/health`
+- [x] Testar no navegador se a requisição responde sem erros de CORS
+- [x] Validar que os dois serviços conseguem rodar simultaneamente em terminais separados
 
 ## Sprint 1 (15-19/10) — Backend & Dados
 
@@ -216,11 +216,11 @@ Desenvolver o módulo de autenticação seguro no NestJS para controle de acesso
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Criar AuthModule, AuthService e AuthController no NestJS
-- [ ] Implementar verificação de hash de senha com bcrypt na rota `POST /auth/login`
-- [ ] Configurar emissão de JWT gravado em cookie `httpOnly` (`sameSite: lax`)
-- [ ] Implementar rota `POST /auth/logout` que limpa o cookie da sessão (HU-09 CA-03)
-- [ ] Criar `JwtAuthGuard` para bloquear requisições não autenticadas retornando `401 Unauthorized`
+- [x] Criar AuthModule, AuthService e AuthController no NestJS
+- [x] Implementar verificação de hash de senha com bcrypt na rota `POST /auth/login`
+- [x] Configurar emissão de JWT gravado em cookie `httpOnly` (`sameSite: lax`)
+- [x] Implementar rota `POST /auth/logout` que limpa o cookie da sessão (HU-09 CA-03)
+- [x] Criar `JwtAuthGuard` para bloquear requisições não autenticadas retornando `401 Unauthorized`
 
 ### Card 3.3: [Frontend] Tela de Login, Tratamento de Erro e Logout
 

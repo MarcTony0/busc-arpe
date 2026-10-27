@@ -7,6 +7,7 @@ import { Pool } from 'pg';
 import { executarComandoSeedBens } from './seed-bens/comando-seed';
 import * as fs from 'fs';
 import { normalizarTexto } from './normalizar-texto';
+import { seedUsuarios } from './seed-usuarios';
 
 const PASTA_DATA = path.join(__dirname, 'data');
 
@@ -76,7 +77,10 @@ async function main(): Promise<void> {
     // 1. Garante os 185 municípios
     await garantirMunicipios(prisma);
 
-    // 2. Processa cada concessão
+    // 2. Garante os usuários padrão do sistema
+    await seedUsuarios(prisma);
+
+    // 3. Processa cada concessão
     for (const concessao of PLANILHAS_CONCESSOES) {
       console.log('----------------------------------------------------------------');
       console.log(`📦 Processando: ${concessao.nome}`);
