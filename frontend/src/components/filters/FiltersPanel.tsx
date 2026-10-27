@@ -126,6 +126,7 @@ export function FiltersPanel({
     return [
       { valor: 'OPERANDO', rotulo: 'Operando' },
       { valor: 'INOPERANTE', rotulo: 'Inoperante' },
+      { valor: 'NAO_INFORMADO', rotulo: 'Não Informado' },
     ];
   }, []);
 

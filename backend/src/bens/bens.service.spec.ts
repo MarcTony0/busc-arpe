@@ -54,7 +54,7 @@ describe('BensService', () => {
       expect(filtros.municipios).toHaveLength(3);
       expect(filtros.sistemas).toEqual(['SAA', 'SES']);
       expect(filtros.categorias).toEqual(['ESTACAO ELEVATORIA', 'RESERVATORIO']);
-      expect(filtros.situacoes).toEqual(['OPERANDO', 'INOPERANTE']);
+      expect(filtros.situacoes).toEqual(['OPERANDO', 'INOPERANTE', 'NAO_INFORMADO']);
     });
   });
 

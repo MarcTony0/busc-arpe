@@ -155,7 +155,13 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
                 />
                 <Linha
                   rotulo="Situação"
-                  valor={bem.situacao === 'OPERANDO' ? 'Operando' : 'Inoperante'}
+                  valor={
+                    bem.situacao === 'OPERANDO'
+                      ? 'Operando'
+                      : bem.situacao === 'INOPERANTE'
+                        ? 'Inoperante'
+                        : 'Não Informado'
+                  }
                 />
               </dl>
             )}

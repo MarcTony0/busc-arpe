@@ -42,7 +42,7 @@ export class BensService {
       municipios,
       sistemas: ['SAA', 'SES'],
       categorias,
-      situacoes: ['OPERANDO', 'INOPERANTE'],
+      situacoes: ['OPERANDO', 'INOPERANTE', 'NAO_INFORMADO'],
     };
   }
 

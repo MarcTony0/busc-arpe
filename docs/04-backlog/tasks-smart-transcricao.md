@@ -266,12 +266,12 @@ Executar uma validação ponta a ponta rigorosa contra todos os critérios de ac
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Validar HU-01 (plotagem correta dos pais, enquadramento de PE, cores SAA/SES e opacidade)
-- [ ] Validar HU-02 (clusters com números, zoom gradual, cores de sistema e fallback bicolor)
-- [ ] Validar HU-04 (busca textual sem acento, parcial, combinada a filtros e estado vazio)
-- [ ] Validar HU-05 (cascata GERES -> Município e cumulatividade "E" dos filtros)
-- [ ] Validar HU-06, HU-07 e HU-08 (abas Visão Geral, Equipamentos e Documentos abrindo em nova aba)
-- [ ] Validar HU-09 e HU-10 (login, logout, feedback de erro e bloqueio de rotas)
+- [x] Validar HU-01 (plotagem correta dos pais, enquadramento de PE, cores SAA/SES e opacidade)
+- [x] Validar HU-02 (clusters com números, zoom gradual, cores de sistema e fallback bicolor)
+- [x] Validar HU-04 (busca textual sem acento, parcial, combinada a filtros e estado vazio)
+- [x] Validar HU-05 (cascata GERES -> Município e cumulatividade "E" dos filtros)
+- [x] Validar HU-06, HU-07 e HU-08 (abas Visão Geral, Equipamentos e Documentos abrindo em nova aba)
+- [x] Validar HU-09 e HU-10 (login, logout, feedback de erro e bloqueio de rotas)
 
 ### Card B.2: [Fullstack] Documentação de Execução (README) e Congelamento de Código
 
