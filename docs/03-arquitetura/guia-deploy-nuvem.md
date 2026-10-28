@@ -25,12 +25,12 @@ flowchart LR
 
 1. Acesse [supabase.com](https://supabase.com) e crie um novo projeto.
 2. Defina uma senha forte para o banco de dados e anote-a.
-3. No painel do projeto, vá em **Project Settings ➔ Database ➔ Connection String**.
-4. Selecione o modo **URI** e copie a string de conexão:
+3. No painel do projeto, vá em **Connect ➔ ORMs / Connection string** (ou **Project Settings ➔ Database**).
+4. Selecione o modo **Session Pooler (porta 5432)** ou **Direct Connection**:
+   - *Aviso sobre IPv4/IPv6:* A conexão direta do Supabase (`db.[PROJETO].supabase.co`) utiliza IPv6 por padrão. Caso seu provedor de internet local opere apenas em IPv4, utilize o **Session Pooler IPv4** (`aws-1-sa-east-1.pooler.supabase.com:5432` com usuário `postgres.[SEU_PROJETO]`), garantindo conectividade estável para migrações e seed.
    ```text
-   postgresql://postgres:[SUA_SENHA]@db.[SEU_PROJETO].supabase.co:5432/postgres
+   postgresql://postgres.[SEU_PROJETO]:[SUA_SENHA]@aws-1-sa-east-1.pooler.supabase.com:5432/postgres
    ```
-5. *(Opcional)* Se utilizar o connection pooling do Supabase, você também pode usar a porta `6543`.
 
 ---
 
@@ -66,11 +66,10 @@ Com o banco do Supabase provisionado, execute o pipeline de seed oficial a parti
 
 ```powershell
 cd backend
-$env:DATABASE_URL="postgresql://postgres:[SUA_SENHA]@db.[SEU_PROJETO].supabase.co:5432/postgres"
 npm.cmd run seed:all
 ```
 
-Esse comando garante que todos os 185 municípios, os 20.686 bens e o seu usuário do `usuarios.local.json` sejam inseridos no PostgreSQL do Supabase.
+Esse comando executa a ingestão em lote de alta performance (conforme documentado na [ADR-0002](adr/ADR-0002-estrategia-de-carga-em-massa-para-bancos-em-nuvem.md)), garantindo que todos os 185 municípios, os 20.657 bens (3.472 instalações pai e 17.185 equipamentos filhos) e o seu usuário do `usuarios.local.json` sejam inseridos no PostgreSQL do Supabase em menos de 2 minutos.
 
 ---
 
