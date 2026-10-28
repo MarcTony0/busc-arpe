@@ -120,3 +120,4 @@ erDiagram
 | 2026-10-23 | Definido que `Ativo Ausente (inexistente)`, `Ativo Ausente (manutencao)`, `Nao Instalado` e `Nunca operou` são normalizados como `Inoperante`; inicialmente, `N/I` e `Outro` bloqueavam a preparação.       |
 | 2026-10-23 | Ampliada a situação do Bem para incluir `N/I`; condições originais `N/I` e `Outro` geram situação N/I nos filhos, e o pai recebe N/I somente quando todos os filhos forem N/I.                              |
 | 2026-10-23 | Definido que instalações com município não associado ao domínio ou divergente entre filhos são adiadas e registradas em relatório local para análise futura, sem gravação no banco. |
+| 2026-10-28 | Alinhamento com a entrega final do MVP: inclusão formal do suporte à situação "Não Informado" (NAO_INFORMADO) no filtro de busca e nos detalhes cadastrais, além do fechamento do pipeline de autenticação segura com JWT e cookies httpOnly. |

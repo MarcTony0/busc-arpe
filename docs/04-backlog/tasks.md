@@ -283,15 +283,16 @@ Finalizar e consolidar o projeto para entrega do MVP dentro do prazo final acord
 
 **Checklist do que tem que ser feito:**
 
-- [ ] Elaborar README.md detalhado com instruções de setup do PostgreSQL
-- [ ] Documentar comandos de migration e execução do seed de dados
-- [ ] Documentar passos para rodar o frontend e o backend localmente
-- [ ] Incluir no README usuário e senha de demonstração para acesso ao sistema
-- [ ] Testar a subida completa do sistema a partir de um clone limpo seguindo o README
-- [ ] Congelar branches e finalizar a entrega oficial do MVP do buscARPE
+- [x] Elaborar README.md detalhado com instruções de setup do PostgreSQL
+- [x] Documentar comandos de migration e execução do seed de dados
+- [x] Documentar passos para rodar o frontend e o backend localmente
+- [x] Incluir no README usuário e senha de demonstração para acesso ao sistema
+- [x] Testar a subida completa do sistema a partir de um clone limpo seguindo o README
+- [x] Congelar branches e finalizar a entrega oficial do MVP do buscARPE
 
 ## Histórico de Alterações
 
 | Data       | Alteração                                                                                                      |
 | ---------- | -------------------------------------------------------------------------------------------------------------- |
 | 2026-10-22 | Transcrição das sprints, cards, descrições, datas e checklists do PDF de tasks smart fornecido para o projeto. |
+| 2026-10-28 | Conclusão do Card B.2: elaboração do README.md completo com setup local, instruções de deploy online (Supabase, Render, Vercel), validação ponta a ponta e congelamento oficial do MVP do buscARPE. |

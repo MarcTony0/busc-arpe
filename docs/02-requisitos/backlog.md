@@ -17,6 +17,7 @@
 | 0.11.0 | 2026-10-23 | Inclusão do comando de seed de bens com upsert transacional por lotes e resumo de conferência; execução real depende da seleção consciente do banco-alvo e das migrations necessárias   |
 | 0.12.0 | 2026-10-23 | Ampliação da situação do Bem para incluir `N/I` e definição de derivação do Bem Pai para filhos sem situação informada                                                                  |
 | 0.13.0 | 2026-10-23 | Definição de carga parcial: instalações com município inválido ou divergente ficam fora do banco e são listadas em relatório local para revisão futura |
+| 1.0.0  | 2026-10-28 | Conclusão e entrega de todos os épicos do MVP (EP-01 a EP-04): mapa Leaflet com clusters, filtros em cascata, busca debounced, painel de detalhes e autenticação com JWT e cookies httpOnly |
 
 ---
 
@@ -34,12 +35,12 @@
 
 ### MVP
 
-| ID    | Épico                            | Ator principal | Estado            |
-| ----- | -------------------------------- | -------------- | ----------------- |
-| EP-01 | Visualização Geográfica dos Bens | Usuário Comum  | 🟡 Em refinamento |
-| EP-02 | Pesquisa e Filtragem de Bens     | Usuário Comum  | 🟡 Em refinamento |
-| EP-03 | Consulta de Detalhes do Bem      | Usuário Comum  | 🟡 Em refinamento |
-| EP-04 | Autenticação e Acesso            | Todos          | 🟡 Em refinamento |
+| ID    | Épico                            | Ator principal | Estado                  |
+| ----- | -------------------------------- | -------------- | ----------------------- |
+| EP-01 | Visualização Geográfica dos Bens | Usuário Comum  | 🟢 Concluído no MVP     |
+| EP-02 | Pesquisa e Filtragem de Bens     | Usuário Comum  | 🟢 Concluído no MVP     |
+| EP-03 | Consulta de Detalhes do Bem      | Usuário Comum  | 🟢 Concluído no MVP     |
+| EP-04 | Autenticação e Acesso            | Todos          | 🟢 Concluído no MVP     |
 
 ### Pós-MVP — identificados, não refinados
 
