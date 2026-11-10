@@ -130,6 +130,20 @@ export function FiltersPanel({
     ];
   }, []);
 
+  const concessionariasDisponiveis = useMemo(() => {
+    return [
+      { valor: 'VITA', rotulo: 'Vita (Sertão / MRAE-I)' },
+      { valor: 'AQUA', rotulo: 'Aqua (RMR - Pajeú / MRAE-II)' },
+    ];
+  }, []);
+
+  const visibilidadesDisponiveis = useMemo(() => {
+    return [
+      { valor: 'visivel', rotulo: 'Visível (Superficial)' },
+      { valor: 'invisivel', rotulo: 'Invisível (Subterrâneo)' },
+    ];
+  }, []);
+
   const setParcial = (parcial: Partial<FiltrosEstado>) => {
     onChange({ ...filtros, ...parcial });
   };
@@ -217,6 +231,20 @@ export function FiltersPanel({
             valor={filtros.situacao}
             opcoes={situacoesDisponiveis}
             onChange={(v) => setParcial({ situacao: v })}
+          />
+
+          <Sanfona
+            titulo="Concessionária"
+            valor={filtros.concessionaria}
+            opcoes={concessionariasDisponiveis}
+            onChange={(v) => setParcial({ concessionaria: v })}
+          />
+
+          <Sanfona
+            titulo="Visibilidade"
+            valor={filtros.visibilidade}
+            opcoes={visibilidadesDisponiveis}
+            onChange={(v) => setParcial({ visibilidade: v })}
           />
         </div>
 

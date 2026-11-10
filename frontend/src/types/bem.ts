@@ -83,6 +83,8 @@ export interface FiltrosEstado {
   sistema: string;
   categoria: string;
   situacao: string;
+  concessionaria: string;
+  visibilidade: string;
 }
 
 export const FILTROS_INICIAIS: FiltrosEstado = {
@@ -92,4 +94,6 @@ export const FILTROS_INICIAIS: FiltrosEstado = {
   sistema: TODOS,
   categoria: TODOS,
   situacao: TODOS,
+  concessionaria: TODOS,
+  visibilidade: TODOS,
 };

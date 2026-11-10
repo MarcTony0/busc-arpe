@@ -86,6 +86,18 @@ export class BensService {
       where.situacao = query.situacao;
     }
 
+    if (query.concessionaria) {
+      where.concessionaria = query.concessionaria;
+    }
+
+    if (query.visivel !== undefined && query.visivel !== '') {
+      if (query.visivel === 'true' || query.visivel === 'visivel') {
+        where.visivel = true;
+      } else if (query.visivel === 'false' || query.visivel === 'invisivel') {
+        where.visivel = false;
+      }
+    }
+
     if (query.q && query.q.trim().length > 0) {
       const termoNormalizado = normalizarTexto(query.q);
       where.busca_texto = {

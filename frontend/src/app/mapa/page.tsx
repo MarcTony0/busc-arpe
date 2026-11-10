@@ -89,6 +89,12 @@ export default function MapaPage() {
         if (filtrosAtuais.situacao !== TODOS) {
           params.set('situacao', filtrosAtuais.situacao);
         }
+        if (filtrosAtuais.concessionaria !== TODOS) {
+          params.set('concessionaria', filtrosAtuais.concessionaria);
+        }
+        if (filtrosAtuais.visibilidade !== TODOS) {
+          params.set('visivel', filtrosAtuais.visibilidade);
+        }
 
         const queryString = params.toString();
         const url = `/api/bens${queryString ? `?${queryString}` : ''}`;
