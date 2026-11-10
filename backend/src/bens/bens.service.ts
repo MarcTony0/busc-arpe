@@ -127,6 +127,11 @@ export class BensService {
             mrae: true,
           },
         },
+        _count: {
+          select: {
+            bensFilhos: true,
+          },
+        },
       },
       orderBy: {
         nome: 'asc',

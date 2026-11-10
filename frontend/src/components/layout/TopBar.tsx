@@ -1,6 +1,6 @@
 'use client';
 
-import { Eraser, LogOut, Search, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, Eraser, LogOut, Search, SlidersHorizontal } from 'lucide-react';
 
 interface TopBarProps {
   busca: string;
@@ -9,6 +9,8 @@ interface TopBarProps {
   onLimpar: () => void;
   onSair?: () => void;
   filtrosAtivos?: number;
+  onAbrirDashboard?: () => void;
+  isGestor?: boolean;
 }
 
 export function TopBar({
@@ -18,6 +20,8 @@ export function TopBar({
   onLimpar,
   onSair,
   filtrosAtivos = 0,
+  onAbrirDashboard,
+  isGestor = false,
 }: TopBarProps) {
   return (
     <header className="z-[500] border-b border-border bg-card/95 backdrop-blur">
@@ -58,7 +62,18 @@ export function TopBar({
           </div>
         </div>
 
-        <div className="order-2 ml-auto flex items-center gap-1 sm:order-3 sm:ml-0">
+        <div className="order-2 ml-auto flex items-center gap-1.5 sm:order-3 sm:ml-0">
+          {isGestor && onAbrirDashboard && (
+            <button
+              type="button"
+              onClick={onAbrirDashboard}
+              className="inline-flex items-center gap-1.5 rounded-md border border-brand/40 bg-brand/10 px-3 py-2 text-sm font-semibold text-brand transition-colors hover:bg-brand hover:text-white"
+              title="Abrir Painel Executivo de Indicadores"
+            >
+              <BarChart3 className="size-4" />
+              <span className="hidden md:inline">Painel Executivo</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={onLimpar}
