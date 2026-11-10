@@ -105,6 +105,8 @@ export class BensService {
         tipo_sistema: true,
         situacao: true,
         categoria: true,
+        concessionaria: true,
+        visivel: true,
         municipio: {
           select: {
             id: true,
@@ -139,6 +141,8 @@ export class BensService {
             nome: true,
             situacao: true,
             categoria: true,
+            concessionaria: true,
+            visivel: true,
             dados_complementares: true,
           },
           orderBy: {

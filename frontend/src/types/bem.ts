@@ -17,6 +17,8 @@ export interface BemLeve {
   tipo_sistema: TipoSistema;
   situacao: SituacaoBem;
   categoria: string;
+  concessionaria: string;
+  visivel: boolean;
   municipio: MunicipioResumo;
 }
 
@@ -26,6 +28,8 @@ export interface BemFilhoResumo {
   nome: string;
   situacao: SituacaoBem;
   categoria: string;
+  concessionaria?: string;
+  visivel?: boolean;
   dados_complementares?: Record<string, unknown> | null;
 }
 
@@ -48,6 +52,8 @@ export interface BemDetalhe {
   categoria: string;
   tipo_sistema: TipoSistema;
   situacao: SituacaoBem;
+  concessionaria: string;
+  visivel: boolean;
   is_pai: boolean;
   dados_complementares?: Record<string, unknown> | null;
   filhos: BemFilhoResumo[];

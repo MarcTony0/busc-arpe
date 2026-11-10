@@ -104,7 +104,7 @@ export function FiltersPanel({
       listaGeres = listaGeres.filter((g) => geresDaMrae.has(g));
     }
 
-    return listaGeres.map((g) => ({ valor: g, rotulo: `${g} GERES` }));
+    return listaGeres.map((g) => ({ valor: g, rotulo: g.includes('GERES') ? g.replace(/GERES/gi, 'RD').trim() : `${g} RD` }));
   }, [opcoes?.geres, opcoes?.municipios, filtros.mrae]);
 
   const mraesDisponiveis = useMemo(() => {
@@ -180,7 +180,7 @@ export function FiltersPanel({
           />
 
           <Sanfona
-            titulo="GERES"
+            titulo="Região de Desenvolvimento (RD)"
             valor={filtros.geres}
             opcoes={geresDisponiveis}
             onChange={(v) => {
