@@ -195,6 +195,28 @@ export default function MapaPage() {
           </div>
         )}
 
+        {/* Legenda visual no mapa */}
+        <div className="pointer-events-none absolute bottom-5 left-3 z-[600] rounded-lg border border-border bg-card/95 px-3 py-2 text-xs shadow-md backdrop-blur sm:bottom-6 sm:left-4">
+          <p className="font-semibold text-foreground mb-1.5 text-[11px] uppercase tracking-wider">Legenda</p>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className="size-3 rounded-full bg-[#1D6FB8] border border-white shadow-xs" />
+              <span className="text-muted-foreground text-[11px]">Água (SAA)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="size-3 rounded-full bg-[#795548] border border-white shadow-xs" />
+              <span className="text-muted-foreground text-[11px]">Esgoto (SES)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                className="size-3 rounded-full border border-white shadow-xs"
+                style={{ background: 'conic-gradient(#1D6FB8 0 50%, #795548 50% 100%)' }}
+              />
+              <span className="text-muted-foreground text-[11px]">Cluster Misto</span>
+            </div>
+          </div>
+        </div>
+
         {/* Gaveta retrátil de filtros */}
         <FiltersPanel
           aberto={filtrosAbertos}

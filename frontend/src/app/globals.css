@@ -18,7 +18,7 @@
   --brand: #1d6fb8;
   --brand-deep: #144d80;
   --saa: #1D6FB8;
-  --ses: #1A9E8F;
+  --ses: #795548;
 }
 
 @theme inline {
@@ -141,6 +141,5 @@ body {
 }
 
 .bem-cluster[data-mix="MISTO"] {
-  background: #1c86a4; /* Fallback D-02: cor intermediária entre azul SAA e verde-azulado SES */
   background: conic-gradient(var(--saa) 0 50%, var(--ses) 50% 100%);
 }
