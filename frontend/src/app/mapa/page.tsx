@@ -6,6 +6,7 @@ import Map from '@/components/map';
 import { TopBar } from '@/components/layout/TopBar';
 import { FiltersPanel } from '@/components/filters/FiltersPanel';
 import { SystemDetails } from '@/components/details/SystemDetails';
+import { ExecutiveDashboard } from '@/components/dashboard/ExecutiveDashboard';
 import {
   TODOS,
   FILTROS_INICIAIS,
@@ -24,6 +25,8 @@ export default function MapaPage() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [selecionado, setSelecionado] = useState<BemLeve | null>(null);
+  const [dashboardAberto, setDashboardAberto] = useState(false);
+  const [perfilUsuario, setPerfilUsuario] = useState<string | null>(null);
 
   // Encerramento da sessão (HU-09 CA-03)
   const handleLogout = async () => {
@@ -41,6 +44,15 @@ export default function MapaPage() {
 
   // Carrega as opções dinâmicas dos filtros a partir da API
   useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((dados) => {
+        if (dados?.perfil) {
+          setPerfilUsuario(dados.perfil);
+        }
+      })
+      .catch((err) => console.warn('Erro ao verificar perfil do usuário:', err));
+
     fetch('/api/filtros', { credentials: 'include' })
       .then((res) => {
         if (res.status === 401) {
@@ -153,6 +165,8 @@ export default function MapaPage() {
         onLimpar={limparTudo}
         onSair={handleLogout}
         filtrosAtivos={filtrosAtivos}
+        isGestor={perfilUsuario === 'GESTOR'}
+        onAbrirDashboard={() => setDashboardAberto(true)}
       />
 
       <main className="relative flex-1 overflow-hidden">
@@ -234,6 +248,14 @@ export default function MapaPage() {
             onFechar={() => setSelecionado(null)}
           />
         )}
+
+        {/* Modal do Painel Executivo de Indicadores (GESTOR) */}
+        <ExecutiveDashboard
+          aberto={dashboardAberto}
+          onFechar={() => setDashboardAberto(false)}
+          bens={bens}
+          filtrado={filtrosAtivos > 0 || busca.trim().length > 0}
+        />
       </main>
     </div>
   );

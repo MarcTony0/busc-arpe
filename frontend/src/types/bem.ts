@@ -20,6 +20,9 @@ export interface BemLeve {
   concessionaria: string;
   visivel: boolean;
   municipio: MunicipioResumo;
+  _count?: {
+    bensFilhos: number;
+  };
 }
 
 export interface BemFilhoResumo {
