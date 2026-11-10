@@ -67,6 +67,50 @@ export default function SystemMap({ bens, selecionadoId, onSelecionar }: SystemM
 
     new RecentrarControl({ position: 'bottomleft' }).addTo(map);
 
+    // Camada Vetorial das 12 Regiões de Desenvolvimento com bordas reforçadas
+    fetch('/pe-regioes-desenvolvimento.geojson')
+      .then((res) => res.json())
+      .then((geoData) => {
+        if (!mapRef.current) return;
+        L.geoJSON(geoData, {
+          style: (feature) => {
+            const cor = feature?.properties?.cor || '#3b82f6';
+            return {
+              color: '#0f172a', // Borda escura e reforçada para telão/projetor
+              weight: 2.5,
+              opacity: 0.85,
+              fillColor: cor,
+              fillOpacity: 0.12, // Preenchimento sutil translúcido
+            };
+          },
+          onEachFeature: (feature, layer) => {
+            const nome = feature.properties.name;
+            const rd = feature.properties.regiaoDesenvolvimento;
+            layer.bindTooltip(
+              `<strong>${nome}</strong><br/><span style="color:#1d6fb8;font-size:11px;">${rd}</span>`,
+              { sticky: true, opacity: 0.95 }
+            );
+            layer.on({
+              mouseover: (e) => {
+                const l = e.target;
+                l.setStyle({
+                  weight: 4,
+                  fillOpacity: 0.25,
+                });
+              },
+              mouseout: (e) => {
+                const l = e.target;
+                l.setStyle({
+                  weight: 2.5,
+                  fillOpacity: 0.12,
+                });
+              },
+            });
+          },
+        }).addTo(map);
+      })
+      .catch((err) => console.warn('Erro ao carregar malha de RDs:', err));
+
     markersRef.current = L.markerClusterGroup({
       showCoverageOnHover: false,
       maxClusterRadius: 50,

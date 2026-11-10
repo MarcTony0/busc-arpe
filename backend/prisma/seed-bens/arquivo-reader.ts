@@ -18,6 +18,7 @@ export interface LinhaBemPlanilha {
   latitude: number | null;
   longitude: number | null;
   condicaoOperacional: string;
+  visivel: boolean;
   dadosOriginais: Record<string, unknown>;
 }
 
@@ -269,6 +270,14 @@ function criarLinhaBem(
     return null;
   }
 
+  const rawTipoBem = String(
+    dadosOriginais[seedConfig.colunaTipoBemOpcional] ||
+    dadosOriginais['TIPO_BEM'] ||
+    '',
+  ).trim().toLowerCase();
+  // Se for "invisivel" ou "invisível", visivel = false; caso contrário padrão true
+  const visivel = !rawTipoBem.includes('invis');
+
   return {
     numeroLinha,
     idBem,
@@ -280,6 +289,7 @@ function criarLinhaBem(
     latitude: converterCampoCoordenada('latitude'),
     longitude: converterCampoCoordenada('longitude'),
     condicaoOperacional: obterTexto(obterCampo('condicaoOperacional')),
+    visivel,
     dadosOriginais,
   };
 }

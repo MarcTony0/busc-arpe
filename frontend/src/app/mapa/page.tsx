@@ -6,6 +6,7 @@ import Map from '@/components/map';
 import { TopBar } from '@/components/layout/TopBar';
 import { FiltersPanel } from '@/components/filters/FiltersPanel';
 import { SystemDetails } from '@/components/details/SystemDetails';
+import { ExecutiveDashboard } from '@/components/dashboard/ExecutiveDashboard';
 import {
   TODOS,
   FILTROS_INICIAIS,
@@ -24,6 +25,8 @@ export default function MapaPage() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [selecionado, setSelecionado] = useState<BemLeve | null>(null);
+  const [dashboardAberto, setDashboardAberto] = useState(false);
+  const [perfilUsuario, setPerfilUsuario] = useState<string | null>(null);
 
   // Encerramento da sessão (HU-09 CA-03)
   const handleLogout = async () => {
@@ -41,6 +44,15 @@ export default function MapaPage() {
 
   // Carrega as opções dinâmicas dos filtros a partir da API
   useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((dados) => {
+        if (dados?.perfil) {
+          setPerfilUsuario(dados.perfil);
+        }
+      })
+      .catch((err) => console.warn('Erro ao verificar perfil do usuário:', err));
+
     fetch('/api/filtros', { credentials: 'include' })
       .then((res) => {
         if (res.status === 401) {
@@ -88,6 +100,12 @@ export default function MapaPage() {
         }
         if (filtrosAtuais.situacao !== TODOS) {
           params.set('situacao', filtrosAtuais.situacao);
+        }
+        if (filtrosAtuais.concessionaria !== TODOS) {
+          params.set('concessionaria', filtrosAtuais.concessionaria);
+        }
+        if (filtrosAtuais.visibilidade !== TODOS) {
+          params.set('visivel', filtrosAtuais.visibilidade);
         }
 
         const queryString = params.toString();
@@ -147,6 +165,8 @@ export default function MapaPage() {
         onLimpar={limparTudo}
         onSair={handleLogout}
         filtrosAtivos={filtrosAtivos}
+        isGestor={perfilUsuario === 'GESTOR'}
+        onAbrirDashboard={() => setDashboardAberto(true)}
       />
 
       <main className="relative flex-1 overflow-hidden">
@@ -189,6 +209,28 @@ export default function MapaPage() {
           </div>
         )}
 
+        {/* Legenda visual no mapa */}
+        <div className="pointer-events-none absolute bottom-5 left-3 z-[600] rounded-lg border border-border bg-card/95 px-3 py-2 text-xs shadow-md backdrop-blur sm:bottom-6 sm:left-4">
+          <p className="font-semibold text-foreground mb-1.5 text-[11px] uppercase tracking-wider">Legenda</p>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className="size-3 rounded-full bg-[#1D6FB8] border border-white shadow-xs" />
+              <span className="text-muted-foreground text-[11px]">Água (SAA)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="size-3 rounded-full bg-[#795548] border border-white shadow-xs" />
+              <span className="text-muted-foreground text-[11px]">Esgoto (SES)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                className="size-3 rounded-full border border-white shadow-xs"
+                style={{ background: 'conic-gradient(#1D6FB8 0 50%, #795548 50% 100%)' }}
+              />
+              <span className="text-muted-foreground text-[11px]">Cluster Misto</span>
+            </div>
+          </div>
+        </div>
+
         {/* Gaveta retrátil de filtros */}
         <FiltersPanel
           aberto={filtrosAbertos}
@@ -206,6 +248,14 @@ export default function MapaPage() {
             onFechar={() => setSelecionado(null)}
           />
         )}
+
+        {/* Modal do Painel Executivo de Indicadores (GESTOR) */}
+        <ExecutiveDashboard
+          aberto={dashboardAberto}
+          onFechar={() => setDashboardAberto(false)}
+          bens={bens}
+          filtrado={filtrosAtivos > 0 || busca.trim().length > 0}
+        />
       </main>
     </div>
   );

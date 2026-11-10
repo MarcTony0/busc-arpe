@@ -12,6 +12,7 @@ export const seedConfig = {
     longitude: 'LONGITUDE',
     condicaoOperacional: 'CONDICAO_OPERACIONAL',
   },
+  colunaTipoBemOpcional: 'TIPO_BEM',
   sistemaPorSigla: {
     SAA: TipoSistema.SAA,
     EAT: TipoSistema.SAA,

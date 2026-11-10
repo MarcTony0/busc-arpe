@@ -87,12 +87,19 @@ describe('BensService', () => {
           tipo_sistema: true,
           situacao: true,
           categoria: true,
+          concessionaria: true,
+          visivel: true,
           municipio: {
             select: {
               id: true,
               nome: true,
               geres: true,
               mrae: true,
+            },
+          },
+          _count: {
+            select: {
+              bensFilhos: true,
             },
           },
         },
@@ -224,6 +231,8 @@ describe('BensService', () => {
               nome: true,
               situacao: true,
               categoria: true,
+              concessionaria: true,
+              visivel: true,
               dados_complementares: true,
             },
             orderBy: { nome: 'asc' },

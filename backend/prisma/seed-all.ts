@@ -8,25 +8,21 @@ import { executarComandoSeedBens } from './seed-bens/comando-seed';
 import * as fs from 'fs';
 import { normalizarTexto } from './normalizar-texto';
 import { seedUsuarios } from './seed-usuarios';
+import XLSX = require('xlsx');
 
+const PASTA_DATA_2 = path.resolve(__dirname, '../../data-2');
 const PASTA_DATA = path.join(__dirname, 'data');
 
-const PLANILHAS_CONCESSOES = [
-  {
-    nome: 'Concessão AQUA (RMR e Pajeú)',
-    arquivo: path.join(
-      PASTA_DATA,
-      'BENS_REVERSIVEIS_AQUA_RMR-PAJEU_2026-09.xlsx',
-    ),
-  },
-  {
-    nome: 'Concessão VITA (Sertão e MRAE-I)',
-    arquivo: path.join(
-      PASTA_DATA,
-      'BENS_REVERSIVEIS_VITA_SERTAO_MRAE-I_2026-09.xlsx',
-    ),
-  },
-];
+async function carregarCodigosPaisDestaqueVita(arquivoDestaque: string): Promise<Set<string>> {
+  const wb = XLSX.readFile(arquivoDestaque);
+  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(wb.Sheets[wb.SheetNames[0]]);
+  const codigos = new Set<string>();
+  for (const r of rows) {
+    const cod = String(r.CODIGO_UNICO_INSTALACAO || '').trim();
+    if (cod) codigos.add(cod);
+  }
+  return codigos;
+}
 
 async function garantirMunicipios(prisma: PrismaClient): Promise<void> {
   const total = await prisma.municipio.count();
@@ -80,22 +76,46 @@ async function main(): Promise<void> {
     // 2. Garante os usuários padrão do sistema
     await seedUsuarios(prisma);
 
-    // 3. Processa cada concessão
-    for (const concessao of PLANILHAS_CONCESSOES) {
-      console.log('----------------------------------------------------------------');
-      console.log(`📦 Processando: ${concessao.nome}`);
-      console.log(`📄 Arquivo: ${path.basename(concessao.arquivo)}`);
-      console.log('----------------------------------------------------------------');
+    // 3. Processa VITA (usando os 398 pais consolidados do CSAN Destaque)
+    const arquivoDestaqueVita = path.join(PASTA_DATA_2, 'vita', 'INVENTARIO_DE_BENS_REVERSIVEIS_REVISADO_CSAN_DESTAQUE.xlsx');
+    const arquivoVita = path.join(PASTA_DATA_2, 'vita', 'BENS_REVERSIVEIS_VITA_SERTAO_MRAE_I_2026_09.xlsx');
+    const arquivoAqua = path.join(PASTA_DATA_2, 'aqua', 'BENS_REVERSIVEIS_AQUA_RMR_PAJEU_2026_09.xlsx');
 
-      await access(concessao.arquivo);
+    console.log('----------------------------------------------------------------');
+    console.log('📦 Carregando códigos oficiais dos 398 Bens Pais da VITA...');
+    console.log(`📄 Arquivo: ${path.basename(arquivoDestaqueVita)}`);
+    console.log('----------------------------------------------------------------');
+    await access(arquivoDestaqueVita);
+    const codigosPaisOficiaisVita = await carregarCodigosPaisDestaqueVita(arquivoDestaqueVita);
+    console.log(`✅ ${codigosPaisOficiaisVita.size} instalações oficiais validadas pelo CSAN Destaque.\n`);
 
-      await executarComandoSeedBens(concessao.arquivo, prisma, {
-        info: (msg) => console.log(`[INFO] ${msg}`),
-        warn: (msg) => console.warn(`[AVISO] ${msg}`),
-      });
+    console.log('----------------------------------------------------------------');
+    console.log('📦 Processando: Concessão VITA (Sertão e MRAE-I)');
+    console.log(`📄 Arquivo: ${path.basename(arquivoVita)}`);
+    console.log('----------------------------------------------------------------');
+    await access(arquivoVita);
+    await executarComandoSeedBens(arquivoVita, prisma, {
+      info: (msg) => console.log(`[INFO] ${msg}`),
+      warn: (msg) => console.warn(`[AVISO] ${msg}`),
+    }, {
+      concessionaria: 'VITA',
+      filtroCodigosInstalacao: codigosPaisOficiaisVita,
+    });
+    console.log('');
 
-      console.log('');
-    }
+    // 4. Processa AQUA
+    console.log('----------------------------------------------------------------');
+    console.log('📦 Processando: Concessão AQUA (RMR e Pajeú)');
+    console.log(`📄 Arquivo: ${path.basename(arquivoAqua)}`);
+    console.log('----------------------------------------------------------------');
+    await access(arquivoAqua);
+    await executarComandoSeedBens(arquivoAqua, prisma, {
+      info: (msg) => console.log(`[INFO] ${msg}`),
+      warn: (msg) => console.warn(`[AVISO] ${msg}`),
+    }, {
+      concessionaria: 'AQUA',
+    });
+    console.log('');
 
     // 3. Resumo consolidado do banco de dados
     const totalPais = await prisma.bem.count({ where: { is_pai: true } });

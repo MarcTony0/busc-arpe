@@ -38,8 +38,20 @@ Seu objetivo principal é centralizar as informações fragmentadas, permitindo 
 
 A fonte oficial de dados (planilha) contém a coluna `MUNICÍPIO`. Para garantir a integridade e evitar erros humanos de preenchimento na origem, o buscARPE manterá uma **Tabela de Domínio Interna** que mapeará automaticamente os 184 municípios de Pernambuco para:
 
-- **As 12 GERES** (Gerências Regionais de Saúde / Polos).
+- **As 12 Regiões de Desenvolvimento (RD)** (Divisão oficial de planejamento do Governo de PE).
 - **As 2 Microrregiões** (MRAE-I Sertão e MRAE-II RMR–Pajeú).
+
+## 6. Regras de Visibilidade e Concessionárias (Sprint Mesa Diretora)
+
+- **Concessionárias:** Os bens passam a ser categorizados explicitamente por sua concessão de origem: `VITA` (MRAE-I - Sertão) ou `AQUA` (MRAE-II - RMR e Pajeú).
+- **Visibilidade:** Derivada da coluna `TIPO_BEM` das planilhas:
+  - **Visível (Superficial):** Ativos em superfície (estações elevatórias, reservatórios, ETAs, ETEs). O inventário de destaque da Vita (`INVENTARIO_..._CSAN_DESTAQUE.xlsx`) é a fonte de verdade consolidando 398 bens pais, todos visíveis.
+  - **Invisível (Enterrado / Subterrâneo):** Tubulações, redes enterradas, poços profundos e caixas de passagem.
+- **Rótulos Oficiais da Gaveta de Detalhes:**
+  - O antigo "Código Único" e "Código" da instalação passa a ser formalmente denominado **`Código Único Instalação Pai`** (alinhado a `CODIGO_UNICO_INSTALACAO`).
+  - O antigo "Nome" passa a ser formalmente denominado **`Nome bem pai`** (alinhado a `NOME_ATIVO_PAI`).
+  - A antiga "Situação" passa a ser denominada **`Condição Operacional`** (alinhada a `CONDICAO_OPERACIONAL`).
+  - A aba "Equipamentos" passa a ser denominada **`Bens Filhos`**, com a garantia explícita de isolamento de que o próprio bem pai não é listado como filho dele mesmo.
 
 ## 6. Distribuição de Dados Complementares
 

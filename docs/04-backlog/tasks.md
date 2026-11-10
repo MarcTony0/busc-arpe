@@ -290,6 +290,123 @@ Finalizar e consolidar o projeto para entrega do MVP dentro do prazo final acord
 - [x] Testar a subida completa do sistema a partir de um clone limpo seguindo o README
 - [x] Congelar branches e finalizar a entrega oficial do MVP do buscARPE
 
+## Sprint Mesa Diretora (10-11/11) — Apresentação Executiva
+
+### Card MD.1: [Backend] Modelagem Prisma: Concessionária, Visibilidade e Perfil Gerente
+
+**Etiquetas:** Backend, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Atualizar o schema do Prisma para suportar as necessidades da reunião com a mesa diretora. Adicionar os campos `concessionaria` (`VITA` | `AQUA`) e `visivel` (`Boolean`) no modelo `Bem` com índices dedicados. Incluir o valor `GERENTE` no enum `PerfilUsuario` e gerar as migrations correspondentes sem perda de dados.
+
+**Checklist do que tem que ser feito:**
+- [ ] Adicionar campos `concessionaria` e `visivel` em `Bem` no `schema.prisma`
+- [ ] Adicionar `GERENTE` ao enum `PerfilUsuario`
+- [ ] Criar e aplicar migration do Prisma
+- [ ] Atualizar DTOs e tipos de retorno no NestJS
+
+---
+
+### Card MD.2: [Backend] Pipeline de Seed das 3 Planilhas (Vita Destaque + Vita MRAE + Aqua)
+
+**Etiquetas:** Backend, Ingestão, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Implementar o pipeline unificado de ingestão das planilhas em `data-2/`. O arquivo `INVENTARIO_..._CSAN_DESTAQUE.xlsx` atua como fonte de verdade dos 398 bens pais da Vita. O arquivo `BENS_REVERSIVEIS_VITA_...xlsx` vincula os filhos e atributos técnicos. A coluna `TIPO_BEM` mapeia a visibilidade (`Visível` = true, `Invisível` = false). A base Aqua é ingerida com a tag `AQUA`.
+
+**Checklist do que tem que ser feito:**
+- [ ] Criar leitor do inventário de destaque da Vita para validar os 398 bens pais
+- [ ] Implementar deduplicação e junção com a planilha MRAE-I da Vita
+- [ ] Mapear coluna `TIPO_BEM` para o booleano `visivel`
+- [ ] Adaptar a ingestão da Aqua para preencher `concessionaria = AQUA`
+- [ ] Executar carga em massa e validar contagens no banco de dados
+
+---
+
+### Card MD.3: [Frontend] Rótulos Oficiais, Nomenclatura RD e Aba Bens Filhos
+
+**Etiquetas:** Frontend, UI/UX, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Adequar a interface para a terminologia oficial e técnica. Substituir todas as referências de "GERES" por "Regiões de Desenvolvimento" (RD) nos filtros e chips. Renomear o título da aba do navegador para "BuscARPE". Na gaveta de detalhes, renomear os campos para `Código Único Instalação Pai`, `Nome bem pai`, `Condição Operacional`, trocar a aba para "Bens Filhos" e garantir que o bem pai não seja exibido dentro da lista de equipamentos.
+
+**Checklist do que tem que ser feito:**
+- [ ] Substituir "GERES" por "Regiões de Desenvolvimento" na Sidebar, MapView e SystemDetails
+- [ ] Atualizar metadata no `layout.tsx` do Next.js para "BuscARPE"
+- [ ] Renomear os rótulos da aba Visão Geral no `SystemDetails.tsx`
+- [ ] Renomear aba para "Bens Filhos" e filtrar para excluir o próprio bem pai da lista
+- [ ] Adicionar tag de visibilidade (Superficial vs Subterrâneo) no cabeçalho/detalhes
+
+---
+
+### Card MD.4: [Frontend] Filtros por Concessionária e Visibilidade
+
+**Etiquetas:** Frontend, Backend, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Adicionar na barra lateral (Sidebar) seletores para filtrar por Concessionária (Todas / Vita / Aqua) e por Visibilidade (Todas / Visível / Invisível). Atualizar o endpoint `GET /bens` e `GET /filtros` no NestJS para receber e aplicar esses parâmetros de forma cumulativa com os demais filtros.
+
+**Checklist do que tem que ser feito:**
+- [ ] Adicionar parâmetros `concessionaria` e `visivel` na query de `GET /bens`
+- [ ] Adicionar seções de acordeão na Sidebar para Concessionária e Visibilidade
+- [ ] Sincronizar o estado dos filtros ativos e exibir os novos chips no topo
+- [ ] Testar filtragem combinada no mapa
+
+---
+
+### Card MD.5: [Frontend] Identidade Visual: Esgoto em Marrom e Clusters Bicolores
+
+**Etiquetas:** Frontend, MapView, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Substituir a cor verde-azulada do Sistema de Esgotamento Sanitário (SES) pela cor marrom (`#795548` / `#8D5B4C`) em todos os elementos cartográficos: pinos de instalações de esgoto, legenda, clusters homogêneos de esgoto e o gradiente cônico biconvexo CSS de clusters mistos (metade azul SAA e metade marrom SES).
+
+**Checklist do que tem que ser feito:**
+- [ ] Atualizar tokens/constantes de cor do SES para marrom
+- [ ] Ajustar ícones e marcadores SVG do Leaflet para o tom marrom
+- [ ] Atualizar `iconCreateFunction` do MarkerCluster para clusters marrons e gradiente cônico misto
+- [ ] Atualizar a legenda visual no mapa
+
+---
+
+### Card MD.6: [Frontend] Malha das 12 Regiões de Desenvolvimento e Bordas Reforçadas
+
+**Etiquetas:** Frontend, GIS/Leaflet, Sprint Mesa Diretora  
+**Data:** 10/11/2026
+
+**Descrição:**  
+Engrossar os traçados limítrofes do Estado de Pernambuco e renderizar no Leaflet a divisão territorial pelas 12 Regiões de Desenvolvimento (RDs) com base no modelo de referência (`geope.pe.gov.br`), permitindo visualização nítida em telões e projetores de apresentação.
+
+**Checklist do que tem que ser feito:**
+- [ ] Adicionar camada GeoJSON com as 12 Regiões de Desenvolvimento de Pernambuco
+- [ ] Configurar estilo com bordas reforçadas (`weight: 3`+), alto contraste e preenchimentos suaves
+- [ ] Adicionar tooltips com o nome de cada RD ao passar o mouse
+- [ ] Validar enquadramento e contraste geral da tela
+
+---
+
+### Card MD.7: [Fullstack] Mini-Dashboard Executivo (KPIs em Memória) Restrito a Gerente
+
+**Etiquetas:** Fullstack, Dashboard, Sprint Mesa Diretora  
+**Data:** 11/11/2026
+
+**Descrição:**  
+Construir um modal de Dashboard com visual executivo contendo cards e gráficos com as métricas consolidadas das concessões (total por concessionária, proporção água vs esgoto, condição operacional e ranking por RD). O cálculo deve ser feito instantaneamente em memória (via `useMemo`) reagindo aos filtros da página. O acesso é restrito no frontend e backend aos usuários com perfil `GERENTE` ou `GESTOR`.
+
+**Checklist do que tem que ser feito:**
+- [ ] Criar seed/migration com usuário de teste de perfil `GERENTE`
+- [ ] Adicionar botão "Painel Executivo" visível apenas para perfis autorizados
+- [ ] Desenvolver componente Modal de Dashboard com cards de KPIs e gráficos
+- [ ] Implementar cálculo em memória sensível aos filtros ativos
+- [ ] Validar velocidade instantânea de abertura e fechamento do modal
+
+---
+
 ## Histórico de Alterações
 
 | Data       | Alteração                                                                                                      |

@@ -86,6 +86,18 @@ export class BensService {
       where.situacao = query.situacao;
     }
 
+    if (query.concessionaria) {
+      where.concessionaria = query.concessionaria;
+    }
+
+    if (query.visivel !== undefined && query.visivel !== '') {
+      if (query.visivel === 'true' || query.visivel === 'visivel') {
+        where.visivel = true;
+      } else if (query.visivel === 'false' || query.visivel === 'invisivel') {
+        where.visivel = false;
+      }
+    }
+
     if (query.q && query.q.trim().length > 0) {
       const termoNormalizado = normalizarTexto(query.q);
       where.busca_texto = {
@@ -105,12 +117,19 @@ export class BensService {
         tipo_sistema: true,
         situacao: true,
         categoria: true,
+        concessionaria: true,
+        visivel: true,
         municipio: {
           select: {
             id: true,
             nome: true,
             geres: true,
             mrae: true,
+          },
+        },
+        _count: {
+          select: {
+            bensFilhos: true,
           },
         },
       },
@@ -139,6 +158,8 @@ export class BensService {
             nome: true,
             situacao: true,
             categoria: true,
+            concessionaria: true,
+            visivel: true,
             dados_complementares: true,
           },
           orderBy: {

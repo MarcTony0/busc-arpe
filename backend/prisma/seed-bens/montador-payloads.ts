@@ -304,7 +304,9 @@ function obterNomeEquipamento(equipamento: LinhaBemPlanilha): string {
 
 export function montarPayloadsBem(
   grupos: GrupoComMunicipio[],
+  opcoesExtras?: { concessionaria?: string },
 ): PayloadGrupoBem[] {
+  const concessionaria = opcoesExtras?.concessionaria || 'VITA';
   conferirCodigosUnicos(grupos);
 
   const indicesBusca = montarIndicesBusca(grupos);
@@ -337,6 +339,8 @@ export function montarPayloadsBem(
       );
     }
 
+    const paiVisivel = grupo.equipamentos.some((e) => e.visivel !== false);
+
     const pai: Prisma.BemCreateInput = {
       codigo_unico: grupo.codigoUnicoInstalacao,
       nome: obterNomeInstalacao(grupo),
@@ -347,6 +351,8 @@ export function montarPayloadsBem(
       categoria: grupo.categoria,
       tipo_sistema: grupo.tipoSistema,
       situacao: grupo.situacao,
+      concessionaria,
+      visivel: paiVisivel,
       is_pai: true,
       dados_complementares: criarDadosComplementaresPai(grupo),
       busca_texto: buscaTextoPai,
@@ -370,6 +376,8 @@ export function montarPayloadsBem(
         categoria: grupo.categoria,
         tipo_sistema: grupo.tipoSistema,
         situacao: derivarSituacaoFilho(equipamento),
+        concessionaria,
+        visivel: equipamento.visivel !== false,
         is_pai: false,
         dados_complementares: criarDadosComplementaresFilho(equipamento),
         busca_texto: buscaTextoFilho,

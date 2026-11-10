@@ -9,11 +9,11 @@ interface SystemDetailsProps {
   onFechar: () => void;
 }
 
-type Aba = 'visao' | 'equip' | 'docs';
+type Aba = 'visao' | 'filhos' | 'docs';
 
 const abas: { id: Aba; label: string }[] = [
   { id: 'visao', label: 'Visão Geral' },
-  { id: 'equip', label: 'Equipamentos' },
+  { id: 'filhos', label: 'Bens Filhos' },
   { id: 'docs', label: 'Documentos' },
 ];
 
@@ -82,9 +82,22 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
           <h2 className="truncate text-sm font-semibold text-white">
             {bem ? bem.nome : 'Carregando...'}
           </h2>
-          <p className="mt-0.5 text-xs text-white/70">
-            {bem ? `Código: ${bem.codigo_unico}` : `ID: #${bemId}`}
-          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] text-white/80">
+              {bem ? bem.codigo_unico : `ID: #${bemId}`}
+            </span>
+            {bem && (
+              <span
+                className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                  bem.visivel
+                    ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30'
+                    : 'bg-amber-500/20 text-amber-200 border border-amber-500/30'
+                }`}
+              >
+                {bem.visivel ? 'Superficial (Visível)' : 'Enterrado / Subterrâneo'}
+              </span>
+            )}
+          </div>
         </div>
         <button
           type="button"
@@ -110,8 +123,10 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
             }`}
           >
             {item.label}
-            {item.id === 'equip' && bem && bem.filhos.length > 0 && (
-              <span className="ml-1 text-[10px] text-muted-foreground">({bem.filhos.length})</span>
+            {item.id === 'filhos' && bem && (
+              <span className="ml-1 text-[10px] text-muted-foreground">
+                ({bem.filhos.filter((f) => f.codigo_unico !== bem.codigo_unico).length})
+              </span>
             )}
             {item.id === 'docs' && bem && bem.documentos.length > 0 && (
               <span className="ml-1 text-[10px] text-muted-foreground">({bem.documentos.length})</span>
@@ -137,13 +152,26 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
 
         {!carregando && !erro && bem && (
           <>
-            {/* Aba: Visão Geral (7 campos essenciais) */}
+            {/* Aba: Visão Geral (rótulos alinhados ao banco) */}
             {aba === 'visao' && (
               <dl className="divide-y divide-border/60">
-                <Linha rotulo="Código Único" valor={bem.codigo_unico} />
-                <Linha rotulo="Nome" valor={bem.nome} />
-                <Linha rotulo="Endereço" valor={bem.endereco} />
+                <Linha rotulo="Código Único Instalação Pai" valor={bem.codigo_unico} />
+                <Linha rotulo="Nome bem pai" valor={bem.nome} />
+                <Linha
+                  rotulo="Condição Operacional"
+                  valor={
+                    bem.situacao === 'OPERANDO'
+                      ? 'Operando'
+                      : bem.situacao === 'INOPERANTE'
+                        ? 'Inoperante'
+                        : 'Não Informado'
+                  }
+                />
+                <Linha rotulo="Concessionária" valor={bem.concessionaria} />
+                <Linha rotulo="Região de Desenvolvimento" valor={bem.municipio?.geres} />
+                <Linha rotulo="Microrregião" valor={bem.municipio?.mrae} />
                 <Linha rotulo="Município" valor={bem.municipio?.nome} />
+                <Linha rotulo="Endereço" valor={bem.endereco} />
                 <Linha rotulo="Categoria" valor={bem.categoria} />
                 <Linha
                   rotulo="Tipo de Sistema"
@@ -153,31 +181,29 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
                       : 'SES — Esgotamento sanitário'
                   }
                 />
-                <Linha
-                  rotulo="Situação"
-                  valor={
-                    bem.situacao === 'OPERANDO'
-                      ? 'Operando'
-                      : bem.situacao === 'INOPERANTE'
-                        ? 'Inoperante'
-                        : 'Não Informado'
-                  }
-                />
               </dl>
             )}
 
-            {/* Aba: Equipamentos (Bens Filhos) */}
-            {aba === 'equip' &&
-              (bem.filhos.length === 0 ? (
-                <Vazio texto="Não há equipamentos cadastrados para este bem" />
+            {/* Aba: Bens Filhos (garantindo que o próprio pai não apareça na lista) */}
+            {aba === 'filhos' && (() => {
+              const filhosFiltrados = bem.filhos.filter((f) => f.codigo_unico !== bem.codigo_unico);
+              return filhosFiltrados.length === 0 ? (
+                <Vazio texto="Não há bens filhos cadastrados para esta instalação" />
               ) : (
                 <ul className="space-y-2">
-                  {bem.filhos.map((filho) => (
+                  {filhosFiltrados.map((filho) => (
                     <li
                       key={filho.id}
                       className="rounded-md border border-border bg-card p-2.5 transition-colors hover:border-brand/40"
                     >
-                      <p className="text-xs font-semibold text-foreground">{filho.nome}</p>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-xs font-semibold text-foreground">{filho.nome}</p>
+                        {filho.visivel !== undefined && (
+                          <span className="shrink-0 text-[10px] text-muted-foreground">
+                            {filho.visivel ? 'Superficial' : 'Subterrâneo'}
+                          </span>
+                        )}
+                      </div>
                       <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
                         <span className="font-mono">{filho.codigo_unico}</span>
                         <span
@@ -191,7 +217,8 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
                     </li>
                   ))}
                 </ul>
-              ))}
+              );
+            })()}
 
             {/* Aba: Documentos (Google Drive) */}
             {aba === 'docs' &&

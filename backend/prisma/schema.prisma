@@ -51,6 +51,8 @@ model Bem {
   categoria            String
   tipo_sistema         TipoSistema
   situacao             SituacaoBem
+  concessionaria       String       @default("VITA")
+  visivel              Boolean      @default(true)
   is_pai               Boolean      @default(true)
   bem_pai_id           Int?
   bem_pai              Bem?         @relation("PaiFilho", fields: [bem_pai_id], references: [id], onDelete: Cascade)
@@ -62,6 +64,8 @@ model Bem {
   updatedAt            DateTime     @updatedAt @map("updated_at")
 
   @@index([busca_texto])
+  @@index([concessionaria])
+  @@index([visivel])
   @@map("bens")
 }
 

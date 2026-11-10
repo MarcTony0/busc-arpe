@@ -5,5 +5,7 @@ export class ListarBensQueryDto {
   sistema?: string;
   categoria?: string;
   situacao?: string;
+  concessionaria?: string;
+  visivel?: string;
   q?: string;
 }

@@ -18,6 +18,7 @@
 | 0.12.0 | 2026-10-23 | Ampliação da situação do Bem para incluir `N/I` e definição de derivação do Bem Pai para filhos sem situação informada                                                                  |
 | 0.13.0 | 2026-10-23 | Definição de carga parcial: instalações com município inválido ou divergente ficam fora do banco e são listadas em relatório local para revisão futura |
 | 1.0.0  | 2026-10-28 | Conclusão e entrega de todos os épicos do MVP (EP-01 a EP-04): mapa Leaflet com clusters, filtros em cascata, busca debounced, painel de detalhes e autenticação com JWT e cookies httpOnly |
+| 1.1.0  | 2026-11-10 | Abertura da Sprint Mesa Diretora: inclusão de Regiões de Desenvolvimento (substituindo GERES), novos filtros por Concessionária e Visibilidade, cor marrom para SES, aba Bens Filhos e Dashboard Executivo de KPIs |
 
 ---
 
@@ -42,13 +43,14 @@
 | EP-03 | Consulta de Detalhes do Bem      | Usuário Comum  | 🟢 Concluído no MVP     |
 | EP-04 | Autenticação e Acesso            | Todos          | 🟢 Concluído no MVP     |
 
-### Pós-MVP — identificados, não refinados
+### Pós-MVP & Sprint Mesa Diretora
 
-| ID    | Épico                | Ator principal       | Estado              |
-| ----- | -------------------- | -------------------- | ------------------- |
-| EP-05 | Gestão de Documentos | Especialista Técnico | ⚪ Descoberta       |
-| EP-06 | Gestão de Bens       | Especialista Técnico | ⚪ Descoberta       |
-| EP-07 | Gestão da Aplicação  | Gestor               | 🔵 Decisão pendente |
+| ID    | Épico                                       | Ator principal       | Estado              |
+| ----- | ------------------------------------------- | -------------------- | ------------------- |
+| EP-05 | Gestão de Documentos                        | Especialista Técnico | ⚪ Descoberta       |
+| EP-06 | Gestão de Bens                              | Especialista Técnico | ⚪ Descoberta       |
+| EP-07 | Gestão da Aplicação e Ingestão Padronizada  | Gestor               | 🔵 Decisão pendente |
+| EP-08 | Sprint Mesa Diretora (Apresentação 11/11)  | Gestor / Gerente     | 🟡 Em andamento     |
 
 ---
 
@@ -335,7 +337,93 @@
 
 ---
 
-## EP-04 — Autenticação e Acesso
+## EP-08 — Sprint Mesa Diretora (Apresentação 11/11)
+
+**Necessidade:** A ARPE precisa apresentar à mesa diretora uma versão com alta legibilidade para telão/projetor, dados das concessionárias Vita e Aqua sincronizados e métricas consolidadas de tomada de decisão.
+
+**Valor:** Posicionamento estratégico da ARPE na fiscalização, distinção clara das concessões, isolamento de bens visíveis/invisíveis e visualização gerencial por Regiões de Desenvolvimento.
+
+**Ator principal:** Gestor / Gerente
+
+**Estado:** 🟡 Em refinamento
+
+---
+
+### HU-11 — Ingestão e Unificação de Planilhas Atualizadas (Vita e Aqua)
+
+**Como** Gestor do buscARPE,  
+**quero** que a aplicação faça o seed unificado das planilhas atualizadas da Vita e da base inicial da Aqua,  
+**para** consultar a base real e consolidada de ativos com validação de 100% dos bens pais no inventário destaque.
+
+#### Critérios de Aceite:
+- **CA-01 (Fonte de Verdade dos Pais da Vita):** O arquivo `INVENTARIO_..._CSAN_DESTAQUE.xlsx` é a referência de 398 bens pais consolidados, todos visíveis.
+- **CA-02 (Enriquecimento de Filhos):** O arquivo `BENS_REVERSIVEIS_VITA_SERTAO_MRAE_I_2026_09.xlsx` fornece os atributos técnicos e vincula os bens filhos aos pais sem duplicidade.
+- **CA-03 (Derivação de Visibilidade):** Campo `visivel` boolean é preenchido com base na coluna `TIPO_BEM` (`Visível` = true, `Invisível` = false).
+- **CA-04 (Base Aqua):** A planilha `BENS_REVERSIVEIS_AQUA_RMR_PAJEU_2026_09.xlsx` é carregada com concessionária `AQUA`.
+
+---
+
+### HU-12 — Divisão Territorial por Regiões de Desenvolvimento e Ajustes Visuais
+
+**Como** Usuário na apresentação da Mesa Diretora,  
+**quero** ver Pernambuco dividido pelas 12 Regiões de Desenvolvimento (RD) oficiais com bordas engrossadas e esgoto em marrom,  
+**para** identificar imediatamente a divisão administrativa do Estado em telões/projetores.
+
+#### Critérios de Aceite:
+- **CA-01 (Bordas Engrossadas):** Os contornos do Estado de Pernambuco e as divisões das RDs devem ter traçado reforçado (`weight: 3`+) e alto contraste.
+- **CA-02 (Malha das 12 RDs):** Exibição da divisão territorial por Regiões de Desenvolvimento no Leaflet seguindo a referência `geope.pe.gov.br`.
+- **CA-03 (Substituição de Nomenclatura):** O termo "GERES" é substituído por "Regiões de Desenvolvimento" (ou "RD") na sidebar, chips e detalhes.
+- **CA-04 (Esgoto Marrom):** Os pinos, legenda, clusters de SES e o gradiente cônico biconvexo misto (azul SAA / marrom SES) adotam a cor marrom.
+- **CA-05 (Título da Aba):** A aba do navegador deve exibir "BuscARPE" em vez de "Create Next App".
+
+---
+
+### HU-13 — Filtros de Concessionária e Visibilidade do Bem
+
+**Como** Usuário da ARPE,  
+**quero** filtrar os bens por Concessionária (Todas / Vita / Aqua) e por Visibilidade (Todas / Visível / Invisível),  
+**para** segmentar contratos em análise e isolar infraestruturas de superfície de redes subterrâneas.
+
+#### Critérios de Aceite:
+- **CA-01 (Filtro por Concessionária):** Adicionar seletor visual na sidebar com opções "Todas", "Vita" e "Aqua".
+- **CA-02 (Filtro por Visibilidade):** Adicionar seletor na sidebar com opções "Todas", "Visível (Superficial)" e "Invisível (Subterrâneo)".
+- **CA-03 (Cumulatividade):** Os novos filtros operam em conjunto (`AND`) com os filtros existentes de sistema, situação e geografia.
+
+---
+
+### HU-14 — Detalhamento com Aba Bens Filhos e Rótulos Padronizados
+
+**Como** Fiscal da ARPE,  
+**quero** visualizar a aba "Bens Filhos" sem que o próprio bem pai apareça na lista de equipamentos, e com rótulos alinhados ao banco,  
+**para** ter precisão técnica na conferência dos ativos vinculados.
+
+#### Critérios de Aceite:
+- **CA-01 (Aba Bens Filhos):** A aba "Equipamentos" passa a se chamar "Bens Filhos".
+- **CA-02 (Exclusão do Pai na Lista):** O próprio bem pai nunca aparece listado dentro da lista de bens filhos.
+- **CA-03 (Rótulos Oficiais):**
+  - "Código Único" $\rightarrow$ `Código Único Instalação Pai`
+  - "Nome" $\rightarrow$ `Nome bem pai`
+  - "Situação" $\rightarrow$ `Condição Operacional`
+- **CA-04 (Tag de Visibilidade):** Exibir badge no detalhe indicando `Superficial (Visível)` ou `Enterrado/Subterrâneo (Invisível)`.
+
+---
+
+### HU-15 — Mini-Dashboard Executivo (KPIs em Memória) com Controle de Perfil
+
+**Como** Gerente da ARPE,  
+**quero** acessar um modal de Dashboard com os indicadores agregados das concessões calculados instantaneamente em memória,  
+**para** ter uma visão executiva do patrimônio sem onerar o banco de dados.
+
+#### Critérios de Aceite:
+- **CA-01 (Acesso Restrito ao Perfil Gerente):** Botão de acesso ao Dashboard só fica visível e liberado para usuários com perfil `GERENTE` (ou `GESTOR`).
+- **CA-02 (Cálculo Instantâneo em Memória):** Métricas computadas via `useMemo` a partir dos bens pais carregados no frontend.
+- **CA-03 (Indicadores Exibidos):**
+  - Total de ativos por concessionária (Vita vs Aqua).
+  - Proporção água (SAA) vs esgoto (SES).
+  - Índice de condição operacional (Operando vs Inoperante vs N/I).
+  - Tabela / Ranking por Região de Desenvolvimento.
+- **CA-04 (Responsivo a Filtros):** Os números do modal reagem aos filtros ativos da barra lateral.
+
 
 **Necessidade:** o sistema possui dados restritos e usuários com escopos de permissão diferentes.
 **Valor:** garantir que apenas pessoas autorizadas acessem a ferramenta e visualizem/operem funcionalidades condizentes com seu perfil.

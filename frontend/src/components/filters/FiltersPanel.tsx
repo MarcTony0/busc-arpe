@@ -104,7 +104,7 @@ export function FiltersPanel({
       listaGeres = listaGeres.filter((g) => geresDaMrae.has(g));
     }
 
-    return listaGeres.map((g) => ({ valor: g, rotulo: `${g} GERES` }));
+    return listaGeres.map((g) => ({ valor: g, rotulo: g.includes('GERES') ? g.replace(/GERES/gi, 'RD').trim() : `${g} RD` }));
   }, [opcoes?.geres, opcoes?.municipios, filtros.mrae]);
 
   const mraesDisponiveis = useMemo(() => {
@@ -127,6 +127,20 @@ export function FiltersPanel({
       { valor: 'OPERANDO', rotulo: 'Operando' },
       { valor: 'INOPERANTE', rotulo: 'Inoperante' },
       { valor: 'NAO_INFORMADO', rotulo: 'Não Informado' },
+    ];
+  }, []);
+
+  const concessionariasDisponiveis = useMemo(() => {
+    return [
+      { valor: 'VITA', rotulo: 'Vita (Sertão / MRAE-I)' },
+      { valor: 'AQUA', rotulo: 'Aqua (RMR - Pajeú / MRAE-II)' },
+    ];
+  }, []);
+
+  const visibilidadesDisponiveis = useMemo(() => {
+    return [
+      { valor: 'visivel', rotulo: 'Visível (Superficial)' },
+      { valor: 'invisivel', rotulo: 'Invisível (Subterrâneo)' },
     ];
   }, []);
 
@@ -180,7 +194,7 @@ export function FiltersPanel({
           />
 
           <Sanfona
-            titulo="GERES"
+            titulo="Região de Desenvolvimento (RD)"
             valor={filtros.geres}
             opcoes={geresDisponiveis}
             onChange={(v) => {
@@ -217,6 +231,20 @@ export function FiltersPanel({
             valor={filtros.situacao}
             opcoes={situacoesDisponiveis}
             onChange={(v) => setParcial({ situacao: v })}
+          />
+
+          <Sanfona
+            titulo="Concessionária"
+            valor={filtros.concessionaria}
+            opcoes={concessionariasDisponiveis}
+            onChange={(v) => setParcial({ concessionaria: v })}
+          />
+
+          <Sanfona
+            titulo="Visibilidade"
+            valor={filtros.visibilidade}
+            opcoes={visibilidadesDisponiveis}
+            onChange={(v) => setParcial({ visibilidade: v })}
           />
         </div>
 
