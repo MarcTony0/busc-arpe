@@ -118,6 +118,15 @@ export async function persistirPayloadsBem(
     });
     const mapaPaisId = new Map(paisSalvos.map((p) => [p.codigo_unico, p.id]));
 
+    // Se a concessionaria veio informada no payload (ex: AQUA), atualiza os pais deste lote
+    if (payloads[0]?.pai.concessionaria) {
+      const conc = payloads[0].pai.concessionaria as string;
+      await (clientePrisma as unknown as { bem: { updateMany: (args: unknown) => Promise<unknown> } }).bem.updateMany({
+        where: { codigo_unico: { in: codigosPais } },
+        data: { concessionaria: conc },
+      });
+    }
+
     const filhosData: unknown[] = [];
     for (const g of payloads) {
       const paiId = mapaPaisId.get(g.pai.codigo_unico);
@@ -137,6 +146,15 @@ export async function persistirPayloadsBem(
       await clientePrisma.bem.createMany({
         data: chunk,
         skipDuplicates: true,
+      });
+    }
+
+    if (payloads[0]?.pai.concessionaria) {
+      const conc = payloads[0].pai.concessionaria as string;
+      const paisIds = Array.from(mapaPaisId.values());
+      await (clientePrisma as unknown as { bem: { updateMany: (args: unknown) => Promise<unknown> } }).bem.updateMany({
+        where: { bem_pai_id: { in: paisIds } },
+        data: { concessionaria: conc },
       });
     }
 

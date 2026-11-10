@@ -42,6 +42,10 @@ export async function executarComandoSeedBens(
   arquivo: string,
   cliente: ClienteComandoSeedBens,
   logger: LoggerComandoSeedBens,
+  opcoesExtras?: {
+    concessionaria?: string;
+    filtroCodigosInstalacao?: Set<string>;
+  },
 ): Promise<ResultadoComandoSeedBens> {
   const municipios = await cliente.municipio.findMany({
     select: {
@@ -51,7 +55,7 @@ export async function executarComandoSeedBens(
     },
   });
 
-  const preparacao = await prepararSeedBens(arquivo, municipios);
+  const preparacao = await prepararSeedBens(arquivo, municipios, opcoesExtras);
   const arquivoRelatorioPendencias = await gravarRelatorioPendenciasMunicipio(
     arquivo,
     preparacao.pendenciasMunicipio,

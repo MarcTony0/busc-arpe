@@ -28,9 +28,20 @@ export interface PreparacaoSeedBens {
 export async function prepararSeedBens(
   arquivo: string,
   municipios: MunicipioDominio[],
+  opcoesExtras?: {
+    concessionaria?: string;
+    filtroCodigosInstalacao?: Set<string>;
+  },
 ): Promise<PreparacaoSeedBens> {
   const resultadoLeitura = await lerArquivoBens(arquivo);
-  const resultadoAgrupamento = agruparInstalacoes(resultadoLeitura.linhas);
+  let linhasParaAgrupar = resultadoLeitura.linhas;
+  if (opcoesExtras?.filtroCodigosInstalacao) {
+    linhasParaAgrupar = linhasParaAgrupar.filter((l) =>
+      opcoesExtras.filtroCodigosInstalacao!.has(l.codigoUnicoInstalacao.trim()),
+    );
+  }
+
+  const resultadoAgrupamento = agruparInstalacoes(linhasParaAgrupar);
   const associacao = associarMunicipios(
     resultadoAgrupamento.grupos,
     municipios,
@@ -38,7 +49,9 @@ export async function prepararSeedBens(
   const separacaoColisoes = separarColisoesCodigo(associacao.gruposAssociados);
   const { gruposConsistentes, pendencias: pendenciasInconsistentes } =
     separarInconsistenciasValores(separacaoColisoes.gruposValidos);
-  const payloads = montarPayloadsBem(gruposConsistentes);
+  const payloads = montarPayloadsBem(gruposConsistentes, {
+    concessionaria: opcoesExtras?.concessionaria,
+  });
   const pendenciasTotais = [
     ...associacao.pendencias,
     ...separacaoColisoes.pendencias,

@@ -42,6 +42,7 @@ usuarios.local.json
 *.xls
 *.csv
 !backend/prisma/data/municipios.csv
+data-2
 
 # Dumps e backups locais
 dump.sql
