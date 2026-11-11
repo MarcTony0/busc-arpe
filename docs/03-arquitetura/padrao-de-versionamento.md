@@ -9,23 +9,13 @@ Este documento estabelece as diretrizes oficiais de controle de versão (Git), e
 O buscARPE adota o **Git Flow Moderno**, equilibrando a segurança de integração contínua com a agilidade do desenvolvimento em equipe:
 
 ```mermaid
-gitGraph
-   commit id: "v1.0.0-mvp" tag: "v1.0.0-mvp"
-   branch develop
-   checkout develop
-   commit id: "setup develop"
-   branch feature/novo-filtro
-   checkout feature/novo-filtro
-   commit id: "feat: adiciona filtro"
-   checkout develop
-   merge feature/novo-filtro id: "merge PR develop"
-   branch fix/ajuste-coordenada
-   checkout fix/ajuste-coordenada
-   commit id: "fix: corrige coordenada"
-   checkout develop
-   merge fix/ajuste-coordenada id: "merge PR develop 2"
-   checkout main
-   merge develop id: "release v1.1.0" tag: "v1.1.0"
+flowchart LR
+    M1["main: v1.0.0-mvp"] --> D1["develop: setup"]
+    D1 --> F1["feature/novo-filtro"]
+    F1 --> D2["develop: merge PR 1"]
+    D2 --> FX1["fix/ajuste-coordenada"]
+    FX1 --> D3["develop: merge PR 2"]
+    D3 --> M2["main: release v1.1.0"]
 ```
 
 ### 1. Branches Permanentes

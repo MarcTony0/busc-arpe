@@ -14,7 +14,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { BemLeve } from '@/types/bem';
+import { RD_NOMES, formatarRD, type BemLeve } from '@/types/bem';
 
 interface ExecutiveDashboardProps {
   aberto: boolean;
@@ -22,21 +22,6 @@ interface ExecutiveDashboardProps {
   bens: BemLeve[];
   filtrado: boolean;
 }
-
-const RD_NOMES: Record<string, string> = {
-  I: 'I - Metropolitana',
-  II: 'II - Mata Norte',
-  III: 'III - Mata Sul',
-  IV: 'IV - Agreste Central',
-  V: 'V - Agreste Meridional',
-  VI: 'VI - Sertão do Moxotó',
-  VII: 'VII - Sertão Central',
-  VIII: 'VIII - Sertão de São Francisco',
-  IX: 'IX - Araripe',
-  X: 'X - Pajeú',
-  XI: 'XI - Itaparica',
-  XII: 'XII - Agreste Setentrional',
-};
 
 const TODAS_RDS = [
   'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII',
@@ -88,12 +73,12 @@ export function ExecutiveDashboard({
       const bensDaRd = bens.filter((b) => b.municipio?.geres === geresId);
       const instCount = bensDaRd.length;
       const filhosCount = bensDaRd.reduce(
-        (acc, b) => acc + (b._count?.bensFilhos ?? 0),
+        (acc, b) => acc + (b._count?.filhos ?? b._count?.bensFilhos ?? 0),
         0
       );
       return {
         id: geresId,
-        nome: RD_NOMES[geresId] ?? `${geresId} RD`,
+        nome: formatarRD(geresId),
         instalacoes: instCount,
         filhos: filhosCount,
         total: instCount + filhosCount,
