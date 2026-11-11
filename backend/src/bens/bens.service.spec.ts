@@ -99,7 +99,7 @@ describe('BensService', () => {
           },
           _count: {
             select: {
-              bensFilhos: true,
+              filhos: true,
             },
           },
         },

@@ -53,14 +53,14 @@ export async function seedUsuarios(prismaClient: PrismaClient = prisma): Promise
       },
       {
         nome: 'Especialista Técnico ARPE',
-        email: 'fiscal@arpe.pe.gov.br',
-        senha: 'fiscal2026',
+        email: 'tecnico@arpe.pe.gov.br',
+        senha: 'tecnico2026',
         perfil: PerfilUsuario.ESPECIALISTA_TECNICO,
       },
       {
         nome: 'Gestor Geral ARPE',
-        email: 'admin@arpe.pe.gov.br',
-        senha: 'admin123',
+        email: 'gestor@arpe.pe.gov.br',
+        senha: 'gestor2026',
         perfil: PerfilUsuario.GESTOR,
       },
     ];

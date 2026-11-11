@@ -51,6 +51,10 @@ body {
   z-index: 1;
 }
 
+.leaflet-interactive:focus {
+  outline: none !important;
+}
+
 .leaflet-control-zoom a,
 .leaflet-bar a {
   border: none !important;

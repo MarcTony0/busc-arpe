@@ -21,7 +21,8 @@ export interface BemLeve {
   visivel: boolean;
   municipio: MunicipioResumo;
   _count?: {
-    bensFilhos: number;
+    filhos?: number;
+    bensFilhos?: number;
   };
 }
 
@@ -100,3 +101,56 @@ export const FILTROS_INICIAIS: FiltrosEstado = {
   concessionaria: TODOS,
   visibilidade: TODOS,
 };
+
+export const RD_NOMES_LIMPOS: Record<string, string> = {
+  I: 'Metropolitana',
+  II: 'Mata Norte',
+  III: 'Mata Sul',
+  IV: 'Agreste Central',
+  V: 'Agreste Meridional',
+  VI: 'Sertão do Moxotó',
+  VII: 'Sertão Central',
+  VIII: 'Sertão de São Francisco',
+  IX: 'Araripe',
+  X: 'Pajeú',
+  XI: 'Itaparica',
+  XII: 'Agreste Setentrional',
+};
+
+export const RD_NOMES: Record<string, string> = {
+  I: 'I - Metropolitana',
+  II: 'II - Mata Norte',
+  III: 'III - Mata Sul',
+  IV: 'IV - Agreste Central',
+  V: 'V - Agreste Meridional',
+  VI: 'VI - Sertão do Moxotó',
+  VII: 'VII - Sertão Central',
+  VIII: 'VIII - Sertão de São Francisco',
+  IX: 'IX - Araripe',
+  X: 'X - Pajeú',
+  XI: 'XI - Itaparica',
+  XII: 'XII - Agreste Setentrional',
+};
+
+export function extrairCodigoRD(valor?: string | null): string {
+  if (!valor) return '';
+  const limpo = valor
+    .replace(/GERES/gi, '')
+    .replace(/RD/gi, '')
+    .split('-')[0]
+    .trim()
+    .toUpperCase();
+  return limpo;
+}
+
+export function formatarRD(valor?: string | null): string {
+  if (!valor) return 'Não informado';
+  const codigo = extrairCodigoRD(valor);
+  return RD_NOMES[codigo] || valor;
+}
+
+export function obterNomeLimpoRD(valor?: string | null): string {
+  if (!valor) return '';
+  const codigo = extrairCodigoRD(valor);
+  return RD_NOMES_LIMPOS[codigo] || valor;
+}

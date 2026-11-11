@@ -122,7 +122,23 @@ export default function MapaPage() {
         }
 
         const data: BemLeve[] = await res.json();
-        setBens(data);
+        const filtradosLocalmente = data.filter((bem) => {
+          if (
+            filtrosAtuais.concessionaria !== TODOS &&
+            bem.concessionaria !== undefined &&
+            bem.concessionaria.toUpperCase() !== filtrosAtuais.concessionaria.toUpperCase()
+          ) {
+            return false;
+          }
+          if (filtrosAtuais.visibilidade !== TODOS && bem.visivel !== undefined) {
+            const deveSerVisivel = filtrosAtuais.visibilidade === 'visivel' || filtrosAtuais.visibilidade === 'true';
+            if (Boolean(bem.visivel) !== deveSerVisivel) {
+              return false;
+            }
+          }
+          return true;
+        });
+        setBens(filtradosLocalmente);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Falha na conexão com a API';
         setErro(msg);
@@ -209,8 +225,8 @@ export default function MapaPage() {
           </div>
         )}
 
-        {/* Legenda visual no mapa */}
-        <div className="pointer-events-none absolute bottom-5 left-3 z-[600] rounded-lg border border-border bg-card/95 px-3 py-2 text-xs shadow-md backdrop-blur sm:bottom-6 sm:left-4">
+        {/* Legenda visual no mapa (posicionada ao lado dos controles de zoom/recentralizar) */}
+        <div className="pointer-events-none absolute bottom-3 left-14 z-[600] rounded-lg border border-border bg-card/95 px-3 py-2 text-xs shadow-md backdrop-blur sm:bottom-4 sm:left-16">
           <p className="font-semibold text-foreground mb-1.5 text-[11px] uppercase tracking-wider">Legenda</p>
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">

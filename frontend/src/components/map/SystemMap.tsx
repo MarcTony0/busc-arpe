@@ -6,7 +6,12 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 
-import { PERNAMBUCO_CENTER, PERNAMBUCO_ZOOM, type BemLeve } from '@/types/bem';
+import {
+  PERNAMBUCO_CENTER,
+  PERNAMBUCO_ZOOM,
+  obterNomeLimpoRD,
+  type BemLeve,
+} from '@/types/bem';
 
 interface SystemMapProps {
   bens: BemLeve[];
@@ -84,13 +89,18 @@ export default function SystemMap({ bens, selecionadoId, onSelecionar }: SystemM
             };
           },
           onEachFeature: (feature, layer) => {
-            const nome = feature.properties.name;
-            const rd = feature.properties.regiaoDesenvolvimento;
-            layer.bindTooltip(
-              `<strong>${nome}</strong><br/><span style="color:#1d6fb8;font-size:11px;">${rd}</span>`,
-              { sticky: true, opacity: 0.95 }
-            );
+            const nomeRegiao =
+              obterNomeLimpoRD(
+                feature.properties?.codigo || feature.properties?.regiaoDesenvolvimento
+              ) || feature.properties?.name;
+            layer.bindTooltip(`<strong>${nomeRegiao}</strong>`, {
+              sticky: true,
+              opacity: 0.95,
+            });
             layer.on({
+              click: (e) => {
+                layer.openTooltip(e.latlng);
+              },
               mouseover: (e) => {
                 const l = e.target;
                 l.setStyle({

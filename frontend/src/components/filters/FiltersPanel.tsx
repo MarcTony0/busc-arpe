@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import {
   TODOS,
+  formatarRD,
   type FiltrosEstado,
   type FiltrosResponse,
 } from '@/types/bem';
@@ -29,6 +30,7 @@ interface SanfonaProps {
 
 function Sanfona({ titulo, valor, opcoes, onChange }: SanfonaProps) {
   const [aberta, setAberta] = useState(valor !== TODOS);
+  const rotuloAtivo = opcoes.find((o) => o.valor === valor)?.rotulo ?? valor;
 
   return (
     <div className="border-b border-border">
@@ -40,7 +42,7 @@ function Sanfona({ titulo, valor, opcoes, onChange }: SanfonaProps) {
       >
         <span className="text-xs font-semibold uppercase tracking-wide text-foreground">
           {titulo}
-          {valor !== TODOS && <span className="ml-2 normal-case text-brand font-bold">· {valor}</span>}
+          {valor !== TODOS && <span className="ml-2 normal-case text-brand font-bold">· {rotuloAtivo}</span>}
         </span>
         <ChevronDown
           className={`size-4 text-muted-foreground transition-transform duration-200 ${
@@ -104,7 +106,7 @@ export function FiltersPanel({
       listaGeres = listaGeres.filter((g) => geresDaMrae.has(g));
     }
 
-    return listaGeres.map((g) => ({ valor: g, rotulo: g.includes('GERES') ? g.replace(/GERES/gi, 'RD').trim() : `${g} RD` }));
+    return listaGeres.map((g) => ({ valor: g, rotulo: formatarRD(g) }));
   }, [opcoes?.geres, opcoes?.municipios, filtros.mrae]);
 
   const mraesDisponiveis = useMemo(() => {
