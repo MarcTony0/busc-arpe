@@ -7,14 +7,14 @@
   },
   {
     "nome": "Especialista Técnico",
-    "email": "fiscal@arpe.pe.gov.br",
-    "senha": "fiscal2026",
+    "email": "tecnico@arpe.pe.gov.br",
+    "senha": "tecnico2026",
     "perfil": "ESPECIALISTA_TECNICO"
   },
   {
     "nome": "Gestor Geral",
-    "email": "admin@arpe.pe.gov.br",
-    "senha": "admin123",
+    "email": "gestor@arpe.pe.gov.br",
+    "senha": "gestor2026",
     "perfil": "GESTOR"
   }
 ]
