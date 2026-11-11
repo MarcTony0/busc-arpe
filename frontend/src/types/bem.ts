@@ -21,7 +21,8 @@ export interface BemLeve {
   visivel: boolean;
   municipio: MunicipioResumo;
   _count?: {
-    bensFilhos: number;
+    filhos?: number;
+    bensFilhos?: number;
   };
 }
 
