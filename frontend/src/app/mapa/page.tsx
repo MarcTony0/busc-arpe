@@ -122,7 +122,23 @@ export default function MapaPage() {
         }
 
         const data: BemLeve[] = await res.json();
-        setBens(data);
+        const filtradosLocalmente = data.filter((bem) => {
+          if (
+            filtrosAtuais.concessionaria !== TODOS &&
+            bem.concessionaria !== undefined &&
+            bem.concessionaria.toUpperCase() !== filtrosAtuais.concessionaria.toUpperCase()
+          ) {
+            return false;
+          }
+          if (filtrosAtuais.visibilidade !== TODOS && bem.visivel !== undefined) {
+            const deveSerVisivel = filtrosAtuais.visibilidade === 'visivel' || filtrosAtuais.visibilidade === 'true';
+            if (Boolean(bem.visivel) !== deveSerVisivel) {
+              return false;
+            }
+          }
+          return true;
+        });
+        setBens(filtradosLocalmente);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Falha na conexão com a API';
         setErro(msg);

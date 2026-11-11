@@ -127,6 +127,16 @@ export async function persistirPayloadsBem(
       });
     }
 
+    const codigosPaisInvisiveis = payloads
+      .filter((g) => g.pai.visivel === false)
+      .map((g) => g.pai.codigo_unico);
+    if (codigosPaisInvisiveis.length > 0) {
+      await (clientePrisma as unknown as { bem: { updateMany: (args: unknown) => Promise<unknown> } }).bem.updateMany({
+        where: { codigo_unico: { in: codigosPaisInvisiveis } },
+        data: { visivel: false },
+      });
+    }
+
     const filhosData: unknown[] = [];
     for (const g of payloads) {
       const paiId = mapaPaisId.get(g.pai.codigo_unico);

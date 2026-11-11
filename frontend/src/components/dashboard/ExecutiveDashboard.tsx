@@ -51,7 +51,7 @@ export function ExecutiveDashboard({
   const resumo = useMemo(() => {
     const instalacoes = bens.length;
     const filhos = bens.reduce(
-      (total, b) => total + (b._count?.bensFilhos ?? 0),
+      (total, b) => total + (b._count?.filhos ?? b._count?.bensFilhos ?? 0),
       0
     );
     const municipiosSet = new Set(
