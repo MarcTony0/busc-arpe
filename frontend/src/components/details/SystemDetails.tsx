@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ExternalLink, FileText, Loader2, X } from 'lucide-react';
-import type { BemDetalhe } from '@/types/bem';
+import { formatarRD, type BemDetalhe } from '@/types/bem';
 
 interface SystemDetailsProps {
   bemId: number;
@@ -168,7 +168,7 @@ export function SystemDetails({ bemId, onFechar }: SystemDetailsProps) {
                   }
                 />
                 <Linha rotulo="Concessionária" valor={bem.concessionaria} />
-                <Linha rotulo="Região de Desenvolvimento" valor={bem.municipio?.geres} />
+                <Linha rotulo="Região de Desenvolvimento" valor={formatarRD(bem.municipio?.geres)} />
                 <Linha rotulo="Microrregião" valor={bem.municipio?.mrae} />
                 <Linha rotulo="Município" valor={bem.municipio?.nome} />
                 <Linha rotulo="Endereço" valor={bem.endereco} />
